@@ -7,6 +7,10 @@
 *.dll
 *.so
 *.dylib
+<<<<<<< HEAD
+=======
+*.env
+>>>>>>> cfc269a (initial commit)
 
 # Test binary, built with `go test -c`
 *.test
