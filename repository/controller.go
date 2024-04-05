@@ -1,33 +1,20 @@
-package handler
+package repository
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"golang.org/x/crypto/bcrypt"
 	"database/sql"
 	"fmt"
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"time"
+	"golang.org/x/crypto/bcrypt"
 	"os"
+	"time"
 
 	_ "perpustakaan/middleware"
-	"perpustakaan/config"
 	"perpustakaan/models"
 )
 
-func AddRoutes(app *fiber.App) {
-	app.Get("/users", GetUsers)
-	// app.Get("/users", middleware.OnlyLibrarian(GetUsers))
-	// app.Get("/users", middleware.OnlyAdmin(GetUsers))
-	app.Post("/signup", Signup)
-	app.Post("/login", Login)
-}
-
-func Signup(c *fiber.Ctx) error {
-	db, err := config.Connect()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-	}
-	defer db.Close()
+func (r *Repository) Signup(c *fiber.Ctx) error {
+	db := r.DB
 
 	var user models.Signup
 	var dbUser models.User
@@ -36,20 +23,20 @@ func Signup(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	err = db.QueryRow("SELECT username FROM users WHERE username=?", user.Username).Scan(&dbUser.Username)
+	err := db.QueryRow("SELECT username FROM users WHERE username=?", user.Username).Scan(&dbUser.Username)
 	if err != sql.ErrNoRows { // if username has already taken
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Username is already taken"})
 	}
 
 	/*
-	if err != nil {	
-		fmt.Println("atas kah")
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-	}
+		if err != nil {
+			fmt.Println("atas kah")
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		}
 	*/
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {	
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
@@ -62,22 +49,18 @@ func Signup(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User created successfully"})
 }
 
-func Login(c *fiber.Ctx) error {
-	db, err := config.Connect()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-	}
-	defer db.Close()
+func (r *Repository) Login(c *fiber.Ctx) error {
+	db := r.DB
 
-	var user models.Signup // doesnt matter 
+	var user models.Signup // doesnt matter
 	var dbUser models.User
 
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	err = db.QueryRow("SELECT id, username, password FROM users WHERE username=?", user.Username).Scan(&dbUser.Id, &dbUser.Username, &dbUser.Password)
-	if err == sql.ErrNoRows { 
+	err := db.QueryRow("SELECT id, username, password FROM users WHERE username=?", user.Username).Scan(&dbUser.Id, &dbUser.Username, &dbUser.Password)
+	if err == sql.ErrNoRows {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Username is not registered"})
 	}
 
@@ -99,11 +82,8 @@ func Login(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"token": tokenString})
 }
 
-func GetUsers(c *fiber.Ctx) error {
-	db, err := config.Connect()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-	}
+func (r *Repository) GetUsers(c *fiber.Ctx) error {
+	db := r.DB
 
 	rows, err := db.Query("SELECT username, password, role FROM users")
 	if err != nil {
