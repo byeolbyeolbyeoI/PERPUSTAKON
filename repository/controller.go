@@ -93,35 +93,7 @@ func (r *Repository) Login(c *fiber.Ctx) error {
 	}
 	c.Cookie(cookie)
 
-	/*
-		// parse the token
-		token, err = jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			// no idea might check on it later
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-			}
-
-			return []byte(os.Getenv("SECRET")), nil
-		})
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		var UserRole string
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			// if exp, id not valid
-			err := db.QueryRow("SELECT role FROM users WHERE id=?", claims["id"]).Scan(&UserRole)
-			fmt.Println(UserRole)
-			if err != nil {
-				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-			}
-		}
-		c.Locals("userRole", UserRole)
-
-		// taking the claims from token using jwt.MapClaims type??
-	*/
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"token": tokenString})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User logged in succesfully"})
 }
 
 func (r *Repository) GetUsers(c *fiber.Ctx) error {
