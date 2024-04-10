@@ -23,15 +23,6 @@ func InitializeApp(app *fiber.App) {
 		DBName:   os.Getenv("DB_DBNAME"),
 	}
 
-	db, err := config.Connect(DBConfig)
-	if err != nil {
-		log.Fatal("could not load the database")
-	}
-
-	repo := repository.Repository{
-		DB: db,
-	}
-
-	repo.SetupRoutes(app)
+	repository.SetupRoutes(app)
 	log.Fatal(app.Listen(":9000"))
 }

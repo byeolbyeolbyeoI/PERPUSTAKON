@@ -4,6 +4,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"database/sql"
 	"fmt"
+	"os"
 )
 
 type Config struct {
@@ -14,8 +15,17 @@ type Config struct {
 	DBName string
 }
 
-func Connect(config *Config) (*sql.DB, error) {
+func Connect() (*sql.DB, error) {
+	config := Config {
+		User:     os.Getenv("DB_USER"),
+		Password: os.Getenv("DB_PASSWORD"),
+		Protocol: os.Getenv("DB_PROTOCOL"),
+		Path:     os.Getenv("DB_PATH"),
+		DBName:   os.Getenv("DB_DBNAME"),
+	}
+
 	dsn := fmt.Sprintf("%s:%s@%s(%s)/%s", config.User, config.Password, config.Protocol, config.Path, config.DBName)
+
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, err

@@ -11,6 +11,11 @@ type User struct {
 	Role int `json:"role"`
 }
 
+type UserInput struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 type Book struct {
 	Id int `json:"id"`
 	Title string `json:"title"`
@@ -30,8 +35,13 @@ type LibraryBook struct {
 	Available bool `json:"available"`
 }
 
-func (lb *LibraryBook) CheckAvailability(db *sql.DB, id int) (bool, error) {
-	// logic
+func (lb *LibraryBook) CheckLibraryBookAvailability(db *sql.DB) (bool, error) {
+	err := db.QueryRow("SELECT available FROM books WHERE id=?", lb.Book.Id).Scan(&lb.Available)
+	if err != nil {
+		return false, err
+		// error handling
+	}
+
 	return lb.Available, nil
 }
 
