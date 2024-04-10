@@ -1,22 +1,22 @@
 package config
 
 import (
-	_ "github.com/go-sql-driver/mysql"
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"os"
 )
 
 type Config struct {
-	User string
+	User     string
 	Password string
 	Protocol string
-	Path string
-	DBName string
+	Path     string
+	DBName   string
 }
 
 func Connect() (*sql.DB, error) {
-	config := Config {
+	config := Config{
 		User:     os.Getenv("DB_USER"),
 		Password: os.Getenv("DB_PASSWORD"),
 		Protocol: os.Getenv("DB_PROTOCOL"),

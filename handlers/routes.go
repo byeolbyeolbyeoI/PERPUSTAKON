@@ -14,6 +14,6 @@ func SetupRoutes(app *fiber.App) {
 
 	// user
 	app.Post("/signup", SignupHandler)
-	app.Post("/login", LoginHandler)
+	// app.Post("/login", LoginHandler)
 }
 
