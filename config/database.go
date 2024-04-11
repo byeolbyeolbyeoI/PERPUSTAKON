@@ -28,8 +28,16 @@ func Connect() (*sql.DB, error) {
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		return nil, err
+		// problem, error not detected
+		return nil, fmt.Errorf("Error connecting to the database")
 	}
+
+	/*
+	err = db.Ping()
+	if err != nil {
+		return nil, fmt.Errorf("Error database connection is not alive")
+	}
+	*/
 
 	return db, nil
 }

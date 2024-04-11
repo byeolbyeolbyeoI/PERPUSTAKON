@@ -24,7 +24,7 @@ type UserRepository struct {
 // decided to not pass dbUser as pointer since the value has nothing to do outside of the function
 func (s *UserRepository) CreateUser(user models.UserInput, dbUser models.User) error {
 	// do the query, user only need read permission, there is chang in dbUser
-	err := s.DB.QueryRow("SELECT username FROM users WHERE username=?", user.Username).Scan(&dbUser.Username)
+	err := s.DB.QueryRow("SELECT username FROM ? WHERE username=?", dbUser.TableName(),user.Username).Scan(&dbUser.Username)
 	defer s.DB.Close()
 	if err != nil { // if there is an error
 		// check if error is not errnorows (username available)
@@ -52,15 +52,24 @@ func (s *UserRepository) CreateUser(user models.UserInput, dbUser models.User) e
 	return fmt.Errorf("Username '%s' already exists", user.Username)
 }
 
-func (s *UserRepository) GetUserById(user *models.User) (*models.User, error) {
+func (s *UserRepository) GetUserById(user models.UserInput, dbUser *models.User) (*models.User, error) {
+	err := s.DB.QueryRow("SELECT id, username, password, role FROM ? WHERE username=?", dbUser.TableName(), user.Username).Scan(&dbUser.Id, &dbUser.Username, &dbUser.Password, &dbUser.Role)
+	if err == sql.ErrNoRows {
+		return nil, fmt.Errorf("Username not registered")
+	}
 
-	return user, nil
+	err = bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password))
+	if err != nil {
+		return nil, fmt.Errorf("Incorrect password")
+	}
+
+	return dbUser, nil
 }
 
 func (s *UserRepository) GetAllUser() ([]models.User, error) {
 	rows, err := s.DB.Query("SELECT id, username, password, role FROM users")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error retrieving rows")
 	}
 	defer rows.Close()
 
@@ -69,7 +78,7 @@ func (s *UserRepository) GetAllUser() ([]models.User, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(&user.Id, &user.Username, &user.Password, &user.Role); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error scanning rows")
 		}
 
 		users = append(users, user)

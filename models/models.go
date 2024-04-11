@@ -11,6 +11,10 @@ type User struct {
 	Role int `json:"role"`
 }
 
+func (u *User) TableName() string {
+	return "users"
+}
+
 type UserInput struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -24,6 +28,10 @@ type Book struct {
 	// create login on array of genres
 	Synopsis string `json:"string"`
 	ReleaseYear int `json:"releaseYear"`
+}
+
+func (b *Book) TableName() string {
+	return "books"
 }
 
 func (b *Book) GetId() int {
