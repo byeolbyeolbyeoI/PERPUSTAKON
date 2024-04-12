@@ -4,13 +4,16 @@ import (
 	"os"
 	"time"
 	"github.com/golang-jwt/jwt/v5"
+
+	"perpustakaan/models"
 )
 
-func GenerateJWT(id int, username string, role int) *jwt.Token {
+// consider whether the variable name should be dbUser
+func GenerateJWT(user models.User) *jwt.Token {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id": id,
-		"username": username,
-		"role": role,
+		"id": user.Id,
+		"username": user.Username,
+		"role": user.Role,
 		"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
 	})
 

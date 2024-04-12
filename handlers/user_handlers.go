@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 
 	"perpustakaan/config"
@@ -17,14 +16,13 @@ func SignupHandler(c *fiber.Ctx) error {
 	}
 
 	var user models.UserInput
-	var dbUser models.User
 	var userRepository = repository.UserRepository{DB: db}
 
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	err = userRepository.CreateUser(user, dbUser)
+	err = userRepository.CreateUser(user)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -39,20 +37,19 @@ func LoginHandler(c *fiber.Ctx) error {
 	}
 
 	var user models.UserInput
-	var dbUser *models.User
+	var dbUser models.User
 	var userRepository = repository.UserRepository{DB: db}
 
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	dbUser, err = userRepository.GetUserById(user, dbUser)	
+	dbUser, err = userRepository.GetUserByUsername(user)	
 	if err != nil {
-		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error":err.Error()})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	fmt.Println(dbUser.Username)
-	token := service.GenerateJWT(dbUser.Id, dbUser.Username, dbUser.Role)
+	token := service.GenerateJWT(dbUser)
 	tokenString, err := service.SignToken(token)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Unable to sign the token"})

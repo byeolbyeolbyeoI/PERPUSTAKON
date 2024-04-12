@@ -11,8 +11,8 @@ import (
 
 // for future usage
 type UserStore interface {
-	CreateUser(user models.UserInput, dbUser models.User) error
-	GetUserById(id int) (*models.User, error)
+	CreateUser(user models.UserInput) error
+	GetUserById(user models.UserInput) (*models.User, error)
 	GetAllUser() ([]models.User, error)
 }
 
@@ -22,9 +22,10 @@ type UserRepository struct {
 
 // userInput is readonly, user is modifyable
 // decided to not pass dbUser as pointer since the value has nothing to do outside of the function
-func (s *UserRepository) CreateUser(user models.UserInput, dbUser models.User) error {
+func (s *UserRepository) CreateUser(user models.UserInput) error {
+	var dbUser models.User
 	// do the query, user only need read permission, there is chang in dbUser
-	err := s.DB.QueryRow("SELECT username FROM ? WHERE username=?", dbUser.TableName(),user.Username).Scan(&dbUser.Username)
+	err := s.DB.QueryRow("SELECT username FROM users WHERE username=?", user.Username).Scan(&dbUser.Username)
 	defer s.DB.Close()
 	if err != nil { // if there is an error
 		// check if error is not errnorows (username available)
@@ -52,15 +53,16 @@ func (s *UserRepository) CreateUser(user models.UserInput, dbUser models.User) e
 	return fmt.Errorf("Username '%s' already exists", user.Username)
 }
 
-func (s *UserRepository) GetUserById(user models.UserInput, dbUser *models.User) (*models.User, error) {
-	err := s.DB.QueryRow("SELECT id, username, password, role FROM ? WHERE username=?", dbUser.TableName(), user.Username).Scan(&dbUser.Id, &dbUser.Username, &dbUser.Password, &dbUser.Role)
+func (s *UserRepository) GetUserByUsername(user models.UserInput) (models.User, error) {
+	var dbUser models.User
+	err := s.DB.QueryRow("SELECT id, username, password, role FROM users WHERE username=?", user.Username).Scan(&dbUser.Id, &dbUser.Username, &dbUser.Password, &dbUser.Role)
 	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("Username not registered")
+		return dbUser, fmt.Errorf("Username not registered")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password))
 	if err != nil {
-		return nil, fmt.Errorf("Incorrect password")
+		return dbUser, fmt.Errorf("Incorrect password")
 	}
 
 	return dbUser, nil
