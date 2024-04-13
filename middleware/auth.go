@@ -1,17 +1,17 @@
 package middleware
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"fmt"
-	"os"
-	"log"
-	_ "perpustakaan/models"
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"log"
+	"os"
+	_ "perpustakaan/models"
 )
 
 func OnlyAdmin(c *fiber.Ctx) error {
-	tokenString := c.Cookies("token")
-	if tokenString == "" {
+	tokenString, ok := IsLoggedIn(c)
+	if !ok {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "you're not even logged in dude"})
 	}
 
@@ -41,8 +41,8 @@ func OnlyAdmin(c *fiber.Ctx) error {
 }
 
 func OnlyLibrarian(c *fiber.Ctx) error {
-	tokenString := c.Cookies("token")
-	if tokenString == "" {
+	tokenString, ok := IsLoggedIn(c)
+	if !ok {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "you're not even logged in dude"})
 	}
 
@@ -51,6 +51,7 @@ func OnlyLibrarian(c *fiber.Ctx) error {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
+		fmt.Println("token : ", token)
 		return []byte(os.Getenv("SECRET")), nil
 	})
 	if err != nil {
@@ -69,4 +70,13 @@ func OnlyLibrarian(c *fiber.Ctx) error {
 	}
 
 	return c.Next()
+}
+
+func IsLoggedIn(c *fiber.Ctx) (string, bool) {
+	tokenString := c.Cookies("token")
+	if tokenString == "" {
+		return "", false
+	}
+
+	return tokenString, true
 }

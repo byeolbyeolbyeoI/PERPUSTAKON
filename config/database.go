@@ -29,15 +29,13 @@ func Connect() (*sql.DB, error) {
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		// problem, error not detected
-		return nil, fmt.Errorf("Error connecting to the database")
+		return nil, err
 	}
 
-	/*
 	err = db.Ping()
 	if err != nil {
-		return nil, fmt.Errorf("Error database connection is not alive")
+		return nil, err
 	}
-	*/
 
 	return db, nil
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"os"
+	"fmt"
 	"time"
 	"github.com/golang-jwt/jwt/v5"
 
@@ -35,4 +36,12 @@ func SignToken(token *jwt.Token) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func KeyFunc(token *jwt.Token) (interface{}, error) {
+	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+	}
+
+	return []byte(os.Getenv("SECRET")), nil
 }
