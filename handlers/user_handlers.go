@@ -1,29 +1,17 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 
-	"perpustakaan/config"
+	"perpustakaan/middleware"
 	"perpustakaan/models"
 	"perpustakaan/repository"
 	"perpustakaan/service"
-	"perpustakaan/middleware"
 )
 
-func SignupHandler(c *fiber.Ctx) error {
-	db, err := config.Connect()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(
-			fiber.Map{
-				"error": fiber.Map{
-					"message": "Unable to connect to the database",
-					"code": "DATABASE_ERROR"}})
-	}
-	defer db.Close()
-
+func (h *Handler) SignupHandler(c *fiber.Ctx) error {
 	var user models.UserInput
-	var userRepository = repository.UserRepository{DB: db}
+	var userRepository = repository.UserRepository{DB: h.DB}
 
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
@@ -45,20 +33,14 @@ func SignupHandler(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User created successfully"})
 }
 
-func LoginHandler(c *fiber.Ctx) error {
+func (h *Handler) LoginHandler(c *fiber.Ctx) error {
 	if  _, loggedIn := middleware.IsLoggedIn(c); loggedIn {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"error": "You are already logged in"})
 	}
 
-	db, err := config.Connect()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error connecting to the database"})
-	}
-	defer db.Close()
-
 	var user models.UserInput
 	var dbUser models.User
-	var userRepository = repository.UserRepository{DB: db}
+	var userRepository = repository.UserRepository{DB: h.DB}
 
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -98,19 +80,9 @@ func LoginHandler(c *fiber.Ctx) error {
 				"username": dbUser.Username}})
 }
 
-func GetUsers(c *fiber.Ctx) error {
-	db, err := config.Connect()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(
-			fiber.Map{
-				"error": fiber.Map{
-					"message": "Unable to connect to the database",
-					"code": "DATABASE_ERROR"}})
-	}
-	defer db.Close()
-
+func (h *Handler) GetUsers(c *fiber.Ctx) error {
 	var users []models.User
-	var userRepository = repository.UserRepository{DB: db}
+	var userRepository = repository.UserRepository{DB: h.DB}
 
 	users, APIError := userRepository.GetAllUser()
 	if APIError != nil {
@@ -128,7 +100,8 @@ func GetUsers(c *fiber.Ctx) error {
 			"data": users})
 }
 
-// delayed
+/*
+this code is ass
 func UpdateUser(c *fiber.Ctx) error {
 	var user models.User
 
@@ -152,3 +125,4 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Update user data successfully"})
 }
+*/
