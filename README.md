@@ -9,7 +9,7 @@ This API uses JWT Token to authenticate and authorizate users, it uses SoC and C
 ### Install Go Programming Language
 You can do so by visiting [https://go.dev/doc/install]
 ### Download the dependencies
-To do so, executing this command below
+To do so, execute this command below
 ```
 cd PERPUSTAKON
 go mod download
