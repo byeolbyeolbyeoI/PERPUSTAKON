@@ -1,0 +1,10 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "PERPUSTAKON",
+        "contact": {},
+        "version": "0.2"
+    },
+    "host": "localhost:9000",
+    "paths": {}
+}

@@ -2,13 +2,21 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"strconv"
 
 	"perpustakaan/middleware"
 	"perpustakaan/models"
 	"perpustakaan/repository"
 	"perpustakaan/service"
+	_ "perpustakaan/docs"
 )
 
+// @Summary Signup a new user
+// @Description Allows users to create their acccount
+// @Tags user 
+// @RequestBody Required
+// @Accept json
+// @Produce json 
 func (h *Handler) SignupHandler(c *fiber.Ctx) error {
 	var user models.UserInput
 	var userRepository = repository.UserRepository{DB: h.DB}
@@ -18,7 +26,7 @@ func (h *Handler) SignupHandler(c *fiber.Ctx) error {
 			fiber.Map{
 				"error": fiber.Map{
 					"message": "Unable to parse JSON data",
-					"code": "BODYPARSER_ERROR"}})
+					"code":    "BODYPARSER_ERROR"}})
 	}
 
 	APIError := userRepository.CreateUser(user)
@@ -27,14 +35,14 @@ func (h *Handler) SignupHandler(c *fiber.Ctx) error {
 			fiber.Map{
 				"error": fiber.Map{
 					"message": APIError.Error.Message,
-					"code": APIError.Error.Code}})
+					"code":    APIError.Error.Code}})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User created successfully"})
 }
 
 func (h *Handler) LoginHandler(c *fiber.Ctx) error {
-	if  _, loggedIn := middleware.IsLoggedIn(c); loggedIn {
+	if _, loggedIn := middleware.IsLoggedIn(c); loggedIn {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"error": "You are already logged in"})
 	}
 
@@ -46,13 +54,22 @@ func (h *Handler) LoginHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	dbUser, APIError := userRepository.GetUserByUsername(user)	
+	dbUser, APIError := userRepository.GetUserByUsername(user.Username)
 	if APIError != nil {
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
 				"error": fiber.Map{
 					"message": APIError.Error.Message,
-					"code": APIError.Error.Code}})
+					"code":    APIError.Error.Code}})
+	}
+
+	APIError = userRepository.CheckPassword(user, dbUser)
+	if APIError != nil {
+		return c.Status(APIError.Status).JSON(
+			fiber.Map{
+				"error": fiber.Map{
+					"message": APIError.Error.Message,
+					"code":    APIError.Error.Code}})
 	}
 
 	token := service.GenerateJWT(dbUser)
@@ -74,9 +91,9 @@ func (h *Handler) LoginHandler(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
 			"data": fiber.Map{
-				"jwt": tokenString,
-				"id": dbUser.Id,
-				"role": dbUser.Role,
+				"jwt":      tokenString,
+				"id":       dbUser.Id,
+				"role":     dbUser.Role,
 				"username": dbUser.Username}})
 }
 
@@ -84,45 +101,48 @@ func (h *Handler) GetUsers(c *fiber.Ctx) error {
 	var users []models.User
 	var userRepository = repository.UserRepository{DB: h.DB}
 
-	users, APIError := userRepository.GetAllUser()
+	users, APIError := userRepository.GetAllUsers()
 	if APIError != nil {
-		// return error that suits the error inside of GetAllUser() function since it vary in errors (im the goat)
+		// reminder that im the goat
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
 				"error": fiber.Map{
 					"message": APIError.Error.Message,
-					"code": APIError.Error.Code}})
+					"code":    APIError.Error.Code}})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
 			"message": "Successfully retrieved users data",
-			"data": users})
+			"data":    users})
 }
 
-/*
-this code is ass
-func UpdateUser(c *fiber.Ctx) error {
-	var user models.User
-
-	tokenString, ok := middleware.IsLoggedIn(c)
-	fmt.Println("token string :", tokenString)
-	if !ok {
-		return c.Status(fiber.StatusUnauthorized).JSON(
-			fiber.Map{
-				"error": fiber.Map{
-					"message": "User not logged in",
-					"code": "AUTHENTICATION_ERROR"}})
-	}
-
-	if err := c.BodyParser(&user); err != nil {
+func (h *Handler) GetUser(c *fiber.Ctx) error {
+	// this defo can be better
+	var id, err = strconv.Atoi(c.Params("id"))
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
 				"error": fiber.Map{
-					"message": "Unable to process the input",
-					"code": "BODYPARSER_ERROR"}})
+					"message": "Unable to convert string to integer",
+					"code":    "STRCONV_ERROR"}})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Update user data successfully"})
+	var user models.User
+	var userRepository = repository.UserRepository{DB: h.DB}
+	user, APIError := userRepository.GetUserById(int(id))
+	if APIError != nil {
+		return c.Status(APIError.Status).JSON(
+			fiber.Map{
+				"error": fiber.Map{
+					"message": APIError.Error.Message,
+					"code":    APIError.Error.Code}})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(
+		fiber.Map{
+			"data": fiber.Map{
+				"id":       user.Id,
+				"username": user.Username,
+				"role":     user.Role}})
 }
-*/

@@ -2,17 +2,15 @@ package models
 
 import (
 	"database/sql"
+	"strings"
 )
 
+// should i do getter aswell?
 type User struct {
 	Id int `json:"id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Role int `json:"role"`
-}
-
-func (u *User) TableName() string {
-	return "users"
 }
 
 type UserInput struct {
@@ -24,16 +22,12 @@ type Book struct {
 	Id int `json:"id"`
 	Title string `json:"title"`
 	Author string `json:"author"`
-	Genre []string `json:"genre"`
-	// create login on array of genres
+	Genres []string `json:"genre"`
 	Synopsis string `json:"string"`
 	ReleaseYear int `json:"releaseYear"`
 }
 
-func (b *Book) TableName() string {
-	return "books"
-}
-
+// getter
 func (b *Book) GetId() int {
 	return b.Id
 }
@@ -41,6 +35,14 @@ func (b *Book) GetId() int {
 type LibraryBook struct {
 	Book Book `json:"book"`
 	Available bool `json:"available"`
+}
+
+func (lb *LibraryBook) Join(genres []string) string {
+	return strings.Join(genres, ", ")
+}
+
+func (lb *LibraryBook) Split(genres string) []string {
+	return strings.Split(genres, ", ")
 }
 
 func (lb *LibraryBook) CheckLibraryBookAvailability(db *sql.DB) (bool, error) {
@@ -52,11 +54,3 @@ func (lb *LibraryBook) CheckLibraryBookAvailability(db *sql.DB) (bool, error) {
 
 	return lb.Available, nil
 }
-
-type Peminjaman struct {
-	Id int `json:"id"`
-	IdBuku int `json:"idBuku"`
-	IdUser int `json:"idUser"`
-}
-
-
