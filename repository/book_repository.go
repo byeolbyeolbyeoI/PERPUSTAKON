@@ -48,3 +48,23 @@ func (b *BookRepository) GetAllBooks() ([]models.LibraryBook, *APIError.APIError
 
 	return libraryBooks, nil
 }
+
+func (b *BookRepository) GetBookById(id int) (models.LibraryBook, *APIError.APIError) {
+	var dbBook models.LibraryBook
+	var genresString string
+	err := b.DB.QueryRow("SELECT id, title, author, genres, synopsis, releaseYear, available FROM books WHERE id=?", id).Scan(
+			&dbBook.Book.Id, 
+			&dbBook.Book.Title, 
+			&dbBook.Book.Author, 
+			&genresString, 
+			&dbBook.Book.Synopsis, 
+			&dbBook.Book.ReleaseYear, 
+			&dbBook.Available)
+	if err == sql.ErrNoRows {
+		return dbBook, APIError.NewAPIError(fiber.StatusInternalServerError, "Id is not registered", err.Error())
+	}
+
+	dbBook.Book.Genres = dbBook.Split(genresString)
+
+	return dbBook, nil
+}

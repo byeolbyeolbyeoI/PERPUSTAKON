@@ -88,6 +88,8 @@ func (h *Handler) LoginHandler(c *fiber.Ctx) error {
 	}
 	c.Cookie(cookie)
 
+	// do the logging with file.txt
+
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
 			"data": fiber.Map{
