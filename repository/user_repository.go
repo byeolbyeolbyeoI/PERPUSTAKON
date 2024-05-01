@@ -42,7 +42,7 @@ func (s *UserRepository) CreateUser(user models.UserInput) *APIError.APIError {
 		}
 
 		// insert the credentials
-		_, err = s.DB.Exec("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", user.Username, hashedPassword, 1)
+		_, err = s.DB.Exec("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", user.Username, hashedPassword, "user")
 		if err != nil {
 			return APIError.NewAPIError(fiber.StatusInternalServerError, "Error creating user", err.Error())
 		}

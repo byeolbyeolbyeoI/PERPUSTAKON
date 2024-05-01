@@ -10,7 +10,7 @@ type User struct {
 	Id int `json:"id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
-	Role int `json:"role"`
+	Role string `json:"role"`
 }
 
 type UserInput struct {
@@ -23,13 +23,8 @@ type Book struct {
 	Title string `json:"title"`
 	Author string `json:"author"`
 	Genres []string `json:"genre"`
-	Synopsis string `json:"string"`
+	Synopsis string `json:"synopsis"`
 	ReleaseYear int `json:"releaseYear"`
-}
-
-// getter
-func (b *Book) GetId() int {
-	return b.Id
 }
 
 type LibraryBook struct {

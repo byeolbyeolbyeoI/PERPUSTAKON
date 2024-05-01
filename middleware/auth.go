@@ -10,9 +10,22 @@ import (
 )
 
 func OnlyAdmin(c *fiber.Ctx) error {
-	tokenString, ok := IsLoggedIn(c)
+	ok := IsLoggedIn(c)
 	if !ok {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "you're not even logged in dude"})
+		return c.Status(fiber.StatusUnauthorized).JSON(
+			fiber.Map{
+				"error": fiber.Map{
+					"message": "You are not logged in",
+					"code":    "AUTHORIZE_ERROR"}})
+	}
+
+	tokenString := GetTokenString(c)
+	if tokenString == "" {
+		return c.Status(fiber.StatusInternalServerError).JSON(
+			fiber.Map{
+				"error": fiber.Map{
+					"message": "Error retrieving JWT Token",
+					"code":    "TOKEN_ERROR"}})
 	}
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -29,7 +42,7 @@ func OnlyAdmin(c *fiber.Ctx) error {
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		// if exp, id not valid
 		role := fmt.Sprint(claims["role"])
-		if role != "3" {
+		if role != "admin" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "youre not an admin"})
 		}
 		if err != nil {
@@ -41,9 +54,22 @@ func OnlyAdmin(c *fiber.Ctx) error {
 }
 
 func OnlyLibrarian(c *fiber.Ctx) error {
-	tokenString, ok := IsLoggedIn(c)
+	ok := IsLoggedIn(c)
 	if !ok {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "you're not even logged in dude"})
+		return c.Status(fiber.StatusUnauthorized).JSON(
+			fiber.Map{
+				"error": fiber.Map{
+					"message": "You are not logged in",
+					"code":    "AUTHORIZE_ERROR"}})
+	}
+
+	tokenString := GetTokenString(c)
+	if tokenString == "" {
+		return c.Status(fiber.StatusInternalServerError).JSON(
+			fiber.Map{
+				"error": fiber.Map{
+					"message": "Error retrieving JWT Token",
+					"code":    "TOKEN_ERROR"}})
 	}
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -61,22 +87,52 @@ func OnlyLibrarian(c *fiber.Ctx) error {
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		// if exp, id not valid
 		role := fmt.Sprint(claims["role"])
-		if role != "2" {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "youre not a librarian/admin"})
+		if role != "librarian" {
+			return c.Status(fiber.StatusUnauthorized).JSON(
+				fiber.Map{
+					"error": fiber.Map{
+						"message": "You are not a librarian",
+						"code":    "AUTHORIZE_ERROR"}})
 		}
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+			return c.Status(fiber.StatusInternalServerError).JSON(
+				fiber.Map{
+					"error": fiber.Map{
+						"message": err.Error(),
+						"code":    err.Error()}})
 		}
 	}
 
 	return c.Next()
 }
 
-func IsLoggedIn(c *fiber.Ctx) (string, bool) {
-	tokenString := c.Cookies("token")
-	if tokenString == "" {
-		return "", false
+func NotLoggedIn(c *fiber.Ctx) error {
+	ok := IsLoggedIn(c)
+	if ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(
+			fiber.Map{
+				"error": fiber.Map{
+					"message": "You are already logged in",
+					"code":    "AUTHORIZE_ERROR"}})
 	}
 
-	return tokenString, true
+	return c.Next()
+}
+
+func IsLoggedIn(c *fiber.Ctx) bool {
+	tokenString := c.Cookies("token")
+	if tokenString == "" {
+		return false
+	}
+
+	return true
+}
+
+func GetTokenString(c *fiber.Ctx) string {
+	tokenString := c.Cookies("token")
+	if tokenString == "" {
+		return ""
+	}
+
+	return tokenString
 }

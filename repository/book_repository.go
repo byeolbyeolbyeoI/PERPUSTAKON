@@ -68,3 +68,21 @@ func (b *BookRepository) GetBookById(id int) (models.LibraryBook, *APIError.APIE
 
 	return dbBook, nil
 }
+
+func (b *BookRepository) AddBook(book models.LibraryBook) *APIError.APIError {
+	var genresString string
+	genresString = book.Join(book.Book.Genres)
+	_, err := b.DB.Exec("INSERT INTO books (title, author, genres, synopsis, releaseYear, available) VALUES (?, ?, ?, ?, ?, ?)", 
+			&book.Book.Title, 
+			&book.Book.Author, 
+			genresString, 
+			&book.Book.Synopsis, 
+			&book.Book.ReleaseYear, 
+			&book.Available,
+	)
+	if err != nil {
+		return APIError.NewAPIError(fiber.StatusInternalServerError, "Error adding book data", err.Error())
+	}
+
+	return nil
+}

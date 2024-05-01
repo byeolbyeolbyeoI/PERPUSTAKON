@@ -3,8 +3,10 @@ package handlers
 import (
 	"github.com/gofiber/fiber/v2"
 	"strconv"
+	"os"
+	"fmt"
+	"time"
 
-	"perpustakaan/middleware"
 	"perpustakaan/models"
 	"perpustakaan/repository"
 	"perpustakaan/service"
@@ -42,10 +44,6 @@ func (h *Handler) SignupHandler(c *fiber.Ctx) error {
 }
 
 func (h *Handler) LoginHandler(c *fiber.Ctx) error {
-	if _, loggedIn := middleware.IsLoggedIn(c); loggedIn {
-		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"error": "You are already logged in"})
-	}
-
 	var user models.UserInput
 	var dbUser models.User
 	var userRepository = repository.UserRepository{DB: h.DB}
@@ -89,6 +87,22 @@ func (h *Handler) LoginHandler(c *fiber.Ctx) error {
 	c.Cookie(cookie)
 
 	// do the logging with file.txt
+	data, err := os.ReadFile("logging.txt")
+	if err != nil {
+		// file doesnt exists
+		log := fmt.Sprintln(dbUser.Role, dbUser.Username, "logged in at", time.Now())		
+		err := os.WriteFile("logging.txt", []byte(log), 0644)		
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Unable writing to the file"})
+		}
+	} else {
+		log := string(data)
+		log += fmt.Sprintln(dbUser.Role, dbUser.Username, "logged in at", time.Now())		
+		err := os.WriteFile("logging.txt", []byte(log), 0644)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Unable writing to the file"})
+		}
+	}
 
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
