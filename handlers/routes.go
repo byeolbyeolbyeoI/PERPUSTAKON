@@ -46,18 +46,25 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	// books
-	app.Get("/getBooks", handler.GetBooks)
-	app.Get("/getBook/:id", handler.GetBook)
-	app.Get("/searchBook/:title", handler.SearchBook)
-	app.Post("/addBook", handler.AddBook)
-	app.Delete("/deleteBook", handler.DeleteBook)
 
 	// user
-	app.Get("/getUsers", middleware.OnlyAdmin, handler.GetUsers)
-	app.Get("/getUsers/:id", middleware.OnlyAdmin, handler.GetUser)
+	app.Get("/getBooks", handler.GetBooks)
+	app.Get("/getBookById/:id", handler.GetBook)
+	app.Get("/getBookByTitle/:title", handler.SearchBook)
 
-	//not now
+	// librarian
+	app.Post("/addBook", middleware.OnlyLibrarian, handler.AddBook)
+	app.Delete("/deleteBook", middleware.OnlyLibrarian, handler.DeleteBook)
+
+	// users
+
+	// user
 	app.Post("/signupHandler", middleware.NotLoggedIn, handler.SignupHandler)
 	app.Post("/loginHandler", middleware.NotLoggedIn, handler.LoginHandler)
+
+	// admin
+	app.Get("/getUsers", middleware.OnlyAdmin, handler.GetUsers)
+	app.Get("/getUserById/:id", middleware.OnlyAdmin, handler.GetUser)
+
 }
 
