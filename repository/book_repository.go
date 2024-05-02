@@ -86,3 +86,20 @@ func (b *BookRepository) AddBook(book models.LibraryBook) *APIError.APIError {
 
 	return nil
 }
+
+func (b *BookRepository) CheckBookAvailability(id int) (bool, *APIError.APIError) {
+	var availability bool
+	err := b.DB.QueryRow("SELECT available FROM books WHERE id=?", id).Scan(&availability)
+	if err == sql.ErrNoRows {
+		return false, APIError.NewAPIError(fiber.StatusInternalServerError, "Book is not registered", err.Error())
+	}
+	if err != nil {
+		return false, APIError.NewAPIError(fiber.StatusInternalServerError, "Error scanning rows", err.Error())
+	}
+
+	if availability == false {
+		return false, nil
+	}
+
+	return true, nil
+}

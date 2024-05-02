@@ -15,17 +15,19 @@ func (h *Handler) GetBooks(c *fiber.Ctx) error {
 
 	books, APIError := bookRepository.GetAllBooks()
 	if APIError != nil {
-		// reminder that im the goat
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": APIError.Error.Message,
-					"code":    APIError.Error.Code}})
+				"success": APIError.Success,
+				"message": APIError.Message,
+				"code": APIError.Code,
+			},
+		)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
-			"message": "Successfully retrieved books data",
+			"success": true,
+			"message": "Books data retrieved successfully",
 			"data":    books})
 }
 
@@ -35,9 +37,11 @@ func (h *Handler) GetBook(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": "Unable to convert string to integer",
-					"code":    "STRCONV_ERROR"}})
+				"success": false,
+				"message": "Params invalid",
+				"code": err.Error(),
+			},
+		)
 	}
 
 	var book models.LibraryBook
@@ -46,13 +50,16 @@ func (h *Handler) GetBook(c *fiber.Ctx) error {
 	if APIError != nil {
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": APIError.Error.Message,
-					"code":    APIError.Error.Code}})
+				"success": APIError.Success,
+				"message": APIError.Message,
+				"code": APIError.Code,
+			},
+		)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Succes retrieving book data",
+		"success": true,
+		"message": "Book data retrieved successfully",
 		"data": fiber.Map{
 			"id": book.Book.Id,
 			"title": book.Book.Title,
@@ -75,21 +82,28 @@ func (h *Handler) DeleteBook(c *fiber.Ctx) error {
 	if err := c.BodyParser(&book); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": "Error parsing the input",
-					"code":    "BODYPARSER_ERROR"}})
+				"success": false,
+				"message": "Input not valid",
+				"code": err.Error(),
+			},
+		)
 	}
 
 	_, err := h.DB.Exec("DELETE FROM books WHERE id=?", book.Id)	
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": "Error deleting book data",
-					"code":    "DATABASE_ERROR"}})
+				"success": false,
+				"message": "Error deleting book data",
+				"code": err.Error(),
+			},
+		)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Successfully delete book data"})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"message": "Book deleted successfully",
+	})
 }
 
 func (h *Handler) AddBook(c *fiber.Ctx) error {
@@ -99,21 +113,28 @@ func (h *Handler) AddBook(c *fiber.Ctx) error {
 	if err := c.BodyParser(&book); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": "Unable to parse JSON data",
-					"code":    "BODYPARSER_ERROR"}})
+				"success": false,
+				"message": "Input not valid",
+				"code": err.Error(),
+			},
+		)
 	}
 
 	APIError := bookRepository.AddBook(book)
 	if APIError != nil {
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": APIError.Error.Message,
-					"code":    APIError.Error.Code}})
+				"success": APIError.Success,
+				"message": APIError.Message,
+				"code": APIError.Code,
+			},
+		)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Book Added successfully"})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"message": "Book added successfully",
+	})
 }
 
 
@@ -125,12 +146,13 @@ func (h *Handler) SearchBook(c *fiber.Ctx) error {
 
 	books, APIError := bookRepository.GetAllBooks()
 	if APIError != nil {
-		// reminder that im the goat
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": APIError.Error.Message,
-					"code":    APIError.Error.Code}})
+				"success": APIError.Success,
+				"message": APIError.Message,
+				"code": APIError.Code,
+			},
+		)
 	}
 
 	var found = false
@@ -147,12 +169,15 @@ func (h *Handler) SearchBook(c *fiber.Ctx) error {
 	if found == false {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": "Title not found",
-					"code":    "BOOK_NOT_FOUND"}})
+				"success": false,
+				"message": "Book not found",
+				"code": "Title not found",
+			},
+		)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
 		"message": "Succes retrieving book data",
 		"data": fiber.Map{
 			"id": books[index].Book.Id,

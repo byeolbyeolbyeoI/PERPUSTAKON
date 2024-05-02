@@ -26,18 +26,22 @@ func (h *Handler) SignupHandler(c *fiber.Ctx) error {
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": "Unable to parse JSON data",
-					"code":    "BODYPARSER_ERROR"}})
+				"success": false,
+				"message": "Error parsing the body",
+				"code": err.Error(),
+			},
+		)
 	}
 
 	APIError := userRepository.CreateUser(user)
 	if APIError != nil {
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": APIError.Error.Message,
-					"code":    APIError.Error.Code}})
+				"success": APIError.Success,
+				"message": APIError.Message,
+				"code": APIError.Code,
+			},
+		)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User created successfully"})
@@ -49,31 +53,47 @@ func (h *Handler) LoginHandler(c *fiber.Ctx) error {
 	var userRepository = repository.UserRepository{DB: h.DB}
 
 	if err := c.BodyParser(&user); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(fiber.StatusInternalServerError).JSON(
+			fiber.Map{
+				"success": false,
+				"message": "Error parsing the body",
+				"code": err.Error(),
+			},
+		)
 	}
 
 	dbUser, APIError := userRepository.GetUserByUsername(user.Username)
 	if APIError != nil {
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": APIError.Error.Message,
-					"code":    APIError.Error.Code}})
+				"success": APIError.Success,
+				"message": APIError.Message,
+				"code": APIError.Code,
+			},
+		)
 	}
 
 	APIError = userRepository.CheckPassword(user, dbUser)
 	if APIError != nil {
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": APIError.Error.Message,
-					"code":    APIError.Error.Code}})
+				"success": APIError.Success,
+				"message": APIError.Message,
+				"code": APIError.Code,
+			},
+		)
 	}
 
 	token := service.GenerateJWT(dbUser)
 	tokenString, err := service.SignToken(token)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Unable to sign the token"})
+		return c.Status(fiber.StatusInternalServerError).JSON(
+			fiber.Map{
+				"success": false,
+				"message": "Unable to sign the token",
+				"code": err.Error(),
+			},
+		)
 	}
 
 	// set the cookie
@@ -93,19 +113,21 @@ func (h *Handler) LoginHandler(c *fiber.Ctx) error {
 		log := fmt.Sprintln(dbUser.Role, dbUser.Username, "logged in at", time.Now())		
 		err := os.WriteFile("logging.txt", []byte(log), 0644)		
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Unable writing to the file"})
+			fmt.Println("error:", err.Error())
 		}
 	} else {
 		log := string(data)
 		log += fmt.Sprintln(dbUser.Role, dbUser.Username, "logged in at", time.Now())		
 		err := os.WriteFile("logging.txt", []byte(log), 0644)
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Unable writing to the file"})
+			fmt.Println("error", err.Error())
 		}
 	}
 
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
+			"success": true,
+			"message": "Successfully logged in",
 			"data": fiber.Map{
 				"jwt":      tokenString,
 				"id":       dbUser.Id,
@@ -119,16 +141,18 @@ func (h *Handler) GetUsers(c *fiber.Ctx) error {
 
 	users, APIError := userRepository.GetAllUsers()
 	if APIError != nil {
-		// reminder that im the goat
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": APIError.Error.Message,
-					"code":    APIError.Error.Code}})
+				"success": APIError.Success,
+				"message": APIError.Message,
+				"code": APIError.Code,
+			},
+		)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
+			"success": true,
 			"message": "Successfully retrieved users data",
 			"data":    users})
 }
@@ -139,9 +163,11 @@ func (h *Handler) GetUser(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": "Unable to convert string to integer",
-					"code":    "STRCONV_ERROR"}})
+				"success": false,
+				"message": "Unable converting the params",
+				"code": err.Error(),
+			},
+		)
 	}
 
 	var user models.User
@@ -150,13 +176,17 @@ func (h *Handler) GetUser(c *fiber.Ctx) error {
 	if APIError != nil {
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": APIError.Error.Message,
-					"code":    APIError.Error.Code}})
+				"success": APIError.Success,
+				"message": APIError.Message,
+				"code": APIError.Code,
+			},
+		)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
+			"success": true,
+			"message": "Successfully retrieved user data",
 			"data": fiber.Map{
 				"id":       user.Id,
 				"username": user.Username,

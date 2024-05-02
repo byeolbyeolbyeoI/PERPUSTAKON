@@ -6,13 +6,10 @@ import (
 )
 
 type APIError struct {
-	Status int `json:"status"`
-	Error APIErrorDetails `json:"error"`
-}
-
-type APIErrorDetails struct {
+	Status  int    `json:"status"`
+	Success bool   `json:"success"`
 	Message string `json:"message"`
-	Code string `json:"code"`
+	Code    string `json:"code"`
 }
 
 func (e *APIError) ToJSON() string {
@@ -26,9 +23,9 @@ func (e *APIError) ToJSON() string {
 
 func NewAPIError(status int, message string, code string) *APIError {
 	return &APIError{
-		Status: status, Error: APIErrorDetails{
-			Message: message,
-			Code: code,
-		},
+		Status:  status,
+		Success: false,
+		Message: message,
+		Code:    code,
 	}
 }

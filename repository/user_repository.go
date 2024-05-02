@@ -51,7 +51,7 @@ func (s *UserRepository) CreateUser(user models.UserInput) *APIError.APIError {
 	}
 
 	// if no err, the Scan() function scanned a row, meaning the username is already exists
-	return APIError.NewAPIError(fiber.StatusConflict, "Username already exists", "USERNAME_TAKEN")
+	return APIError.NewAPIError(fiber.StatusConflict, "Username already exists", err.Error())
 }
  
 func (s *UserRepository) CheckPassword(user models.UserInput, dbUser models.User) *APIError.APIError {
@@ -101,4 +101,18 @@ func (s *UserRepository) GetAllUsers() ([]models.User, *APIError.APIError) {
 	}
 
 	return users, nil
+}
+
+func (s *UserRepository) CheckUserAvailability(id int) (bool, *APIError.APIError) {
+	var dbId int
+	err := s.DB.QueryRow("SELECT id FROM borrowed_books WHERE id=? AND returned_date IS NULL", id).Scan(&dbId)
+	if err == sql.ErrNoRows {
+		return false, nil
+	}
+
+	if err != nil {
+			return false, APIError.NewAPIError(fiber.StatusInternalServerError, "Error scanning rows", err.Error())
+	}
+
+	return true, nil
 }
