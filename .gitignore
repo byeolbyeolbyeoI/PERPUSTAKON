@@ -10,6 +10,7 @@
 <<<<<<< HEAD
 =======
 *.env
+*.txt
 >>>>>>> cfc269a (initial commit)
 
 # Test binary, built with `go test -c`
