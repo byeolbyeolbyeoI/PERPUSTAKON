@@ -10,7 +10,6 @@
 <<<<<<< HEAD
 =======
 *.env
-*.txt
 dummy/
 >>>>>>> cfc269a (initial commit)
 
