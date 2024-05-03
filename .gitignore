@@ -11,6 +11,7 @@
 =======
 *.env
 *.txt
+dummy/
 >>>>>>> cfc269a (initial commit)
 
 # Test binary, built with `go test -c`
