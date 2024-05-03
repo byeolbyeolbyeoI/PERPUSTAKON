@@ -2,36 +2,34 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"time"
-	"fmt"
 
-	"perpustakaan/repository"
 	"perpustakaan/models"
+	"perpustakaan/repository"
 )
 
 func (h *Handler) BorrowBook(c *fiber.Ctx) error {
-	var borrow models.Borrow 
+	var data models.Borrow
 	userRepository := repository.UserRepository{DB: h.DB}
 	bookRepository := repository.BookRepository{DB: h.DB}
 	borrowRepository := repository.BorrowRepository{DB: h.DB}
 
-	if err := c.BodyParser(&borrow); err != nil {
+	if err := c.BodyParser(&data); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
 				"success": false,
 				"message": "Unable converting the params",
-				"code": err.Error(),
+				"code":    err.Error(),
 			},
 		)
 	}
 
-	userAvailability, APIError := userRepository.CheckUserAvailability(borrow.UserId)
+	userAvailability, APIError := userRepository.CheckUserAvailability(data.UserId)
 	if APIError != nil {
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
 				"success": APIError.Success,
 				"message": APIError.Message,
-				"code": APIError.Code,
+				"code":    APIError.Code,
 			},
 		)
 	}
@@ -41,19 +39,18 @@ func (h *Handler) BorrowBook(c *fiber.Ctx) error {
 			fiber.Map{
 				"success": false,
 				"message": "User can only borrow one book at a time",
-				"code": "USER_NOT_AVAILABLE",
+				"code":    "USER_NOT_AVAILABLE",
 			},
 		)
 	}
 
-	// user is available
-	bookAvailability, APIError := bookRepository.CheckBookAvailability(borrow.BookId)
+	bookAvailability, APIError := bookRepository.CheckBookAvailability(data.BookId)
 	if APIError != nil {
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
 				"success": APIError.Success,
 				"message": APIError.Message,
-				"code": APIError.Code,
+				"code":    APIError.Code,
 			},
 		)
 	}
@@ -62,37 +59,98 @@ func (h *Handler) BorrowBook(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusForbidden).JSON(
 			fiber.Map{
 				"success": false,
-				"message": "Boos is being borrowed",
-				"code": "BOOK_NOT_AVAILABLE",
+				"message": "Book is being borrowed",
+				"code":    "BOOK_NOT_AVAILABLE",
 			},
 		)
 	}
 
-	now := time.Now().Format("2006-12-21")
-	fmt.Println("sekarang : ", now)
-	APIError = borrowRepository.BorrowBook(borrow, now)
+	APIError = borrowRepository.BorrowBook(data)
 	if APIError != nil {
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
 				"success": APIError.Success,
 				"message": APIError.Message,
-				"code": APIError.Code,
+				"code":    APIError.Code,
 			},
 		)
 	}
-	// set time format same as mysql
-	// check if user is borrowing (check if they have returned_date null)
-	// check if book available
-	// insert into borrow_book table
-	// toggle book availability
 
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
 			"success": true,
 			"message": "Successfully borrowed the book",
-		})
+		},
+	)
 }
 
 func (h *Handler) ReturnBook(c *fiber.Ctx) error {
-	return nil
+	type userData struct {
+		UserId int `json:"userId"`
+	}
+
+	var inputData userData
+	var data models.Borrow
+	userRepository := repository.UserRepository{DB: h.DB}
+	borrowRepository := repository.BorrowRepository{DB: h.DB}
+
+	if err := c.BodyParser(&inputData); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(
+			fiber.Map{
+				"success": false, "message": "Unable converting the params",
+				"code":    err.Error(),
+			},
+		)
+	}
+
+	userAvailability, APIError := userRepository.CheckUserAvailability(inputData.UserId)
+	if APIError != nil {
+		return c.Status(APIError.Status).JSON(
+			fiber.Map{
+				"success": APIError.Success,
+				"message": APIError.Message,
+				"code":    APIError.Code,
+			},
+		)
+	}
+
+	if userAvailability {
+		return c.Status(fiber.StatusForbidden).JSON(
+			fiber.Map{
+				"success": false,
+				"message": "User is not borrowing any book",
+				"code":    "USER_NOT_AVAILABLE",
+			},
+		)
+	}
+
+	data.UserId = inputData.UserId
+	data.BookId, APIError = borrowRepository.GetBookIdByUserId(inputData.UserId)
+	if APIError != nil {
+		return c.Status(APIError.Status).JSON(
+			fiber.Map{
+				"success": APIError.Success,
+				"message": APIError.Message,
+				"code":    APIError.Code,
+			},
+		)
+	}
+
+	APIError = borrowRepository.ReturnBook(data)
+	if APIError != nil {
+		return c.Status(APIError.Status).JSON(
+			fiber.Map{
+				"success": APIError.Success,
+				"message": APIError.Message,
+				"code":    APIError.Code,
+			},
+		)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(
+		fiber.Map{
+			"success": true,
+			"message": "Successfully returned the book",
+		},
+	)
 }

@@ -2,8 +2,8 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 
+	"strconv"
 	"github.com/gofiber/fiber/v2"
 
 	"perpustakaan/models"
@@ -72,6 +72,8 @@ func (b *BookRepository) GetBookById(id int) (models.LibraryBook, *APIError.APIE
 
 func (b *BookRepository) AddBook(book models.LibraryBook) *APIError.APIError {
 	var genresString string
+	var bookAvailability string
+	bookAvailability = strconv.FormatBool(book.Available)
 	genresString = book.Join(book.Book.Genres)
 	_, err := b.DB.Exec("INSERT INTO books (title, author, genres, synopsis, releaseYear, available) VALUES (?, ?, ?, ?, ?, ?)", 
 			&book.Book.Title, 
@@ -79,7 +81,7 @@ func (b *BookRepository) AddBook(book models.LibraryBook) *APIError.APIError {
 			genresString, 
 			&book.Book.Synopsis, 
 			&book.Book.ReleaseYear, 
-			&book.Available,
+			bookAvailability,
 	)
 	if err != nil {
 		return APIError.NewAPIError(fiber.StatusInternalServerError, "Error adding book data", err.Error())
@@ -115,9 +117,7 @@ func (b *BookRepository) ToggleBookAvailability(id int) error {
 		return err
 	}
 
-	fmt.Println("book availability before :", availability)
 	availability = !availability
-	fmt.Println("book availability after :", availability)
 
 	_, err = b.DB.Exec("UPDATE books SET available=? WHERE id=?", availability, id)
 	if err != nil {

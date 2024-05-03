@@ -63,8 +63,13 @@ func SetupRoutes(app *fiber.App) {
 	app.Post("/loginHandler", middleware.NotLoggedIn, handler.LoginHandler)
 
 	// admin
-	app.Get("/getUsers", middleware.OnlyAdmin, handler.GetUsers)
+	app.Get("/getUsers", handler.GetUsers)
 	app.Get("/getUserById/:id", middleware.OnlyAdmin, handler.GetUser)
 
+	// borrow
+
+	// librarian
+	app.Post("/borrowBook", middleware.OnlyLibrarian, handler.BorrowBook)
+	app.Post("/returnBook", middleware.OnlyLibrarian, handler.ReturnBook)
 }
 

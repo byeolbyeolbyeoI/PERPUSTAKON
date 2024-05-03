@@ -105,7 +105,7 @@ func (s *UserRepository) GetAllUsers() ([]models.User, *APIError.APIError) {
 
 func (s *UserRepository) CheckUserAvailability(id int) (bool, *APIError.APIError) {
 	var dbId int
-	err := s.DB.QueryRow("SELECT id FROM borrowed_books WHERE id=? AND returned_date IS NULL", id).Scan(&dbId)
+	err := s.DB.QueryRow("SELECT id FROM borrowed_books WHERE user_id=? AND returned_date IS NULL", id).Scan(&dbId)
 	if err == sql.ErrNoRows {
 		return true, nil
 	}
