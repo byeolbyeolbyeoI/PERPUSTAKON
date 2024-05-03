@@ -77,7 +77,6 @@ func OnlyLibrarian(c *fiber.Ctx) error {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		fmt.Println("token : ", token)
 		return []byte(os.Getenv("SECRET")), nil
 	})
 	if err != nil {

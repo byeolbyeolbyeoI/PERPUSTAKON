@@ -49,3 +49,8 @@ func (lb *LibraryBook) CheckLibraryBookAvailability(db *sql.DB) (bool, error) {
 
 	return lb.Available, nil
 }
+
+type Borrow struct {
+	UserId int `json:"userId"`
+	BookId int `json:"bookId"`
+}

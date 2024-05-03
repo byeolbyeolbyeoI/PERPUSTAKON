@@ -107,12 +107,12 @@ func (s *UserRepository) CheckUserAvailability(id int) (bool, *APIError.APIError
 	var dbId int
 	err := s.DB.QueryRow("SELECT id FROM borrowed_books WHERE id=? AND returned_date IS NULL", id).Scan(&dbId)
 	if err == sql.ErrNoRows {
-		return false, nil
+		return true, nil
 	}
 
 	if err != nil {
 			return false, APIError.NewAPIError(fiber.StatusInternalServerError, "Error scanning rows", err.Error())
 	}
 
-	return true, nil
+	return false, nil
 }

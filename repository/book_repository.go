@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -102,4 +103,26 @@ func (b *BookRepository) CheckBookAvailability(id int) (bool, *APIError.APIError
 	}
 
 	return true, nil
+}
+
+func (b *BookRepository) ToggleBookAvailability(id int) error {
+	var availability bool
+	err := b.DB.QueryRow("SELECT available FROM books WHERE id=?", id).Scan(&availability)
+	if err == sql.ErrNoRows {
+		return err
+	}
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("book availability before :", availability)
+	availability = !availability
+	fmt.Println("book availability after :", availability)
+
+	_, err = b.DB.Exec("UPDATE books SET available=? WHERE id=?", availability, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

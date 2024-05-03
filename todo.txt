@@ -1,4 +1,0 @@
-logging using .txt
-sorting
-searching
-using algorithm btw

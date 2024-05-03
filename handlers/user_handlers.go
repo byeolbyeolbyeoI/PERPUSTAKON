@@ -190,5 +190,7 @@ func (h *Handler) GetUser(c *fiber.Ctx) error {
 			"data": fiber.Map{
 				"id":       user.Id,
 				"username": user.Username,
-				"role":     user.Role}})
+				"role":     user.Role,
+			},
+		})
 }
