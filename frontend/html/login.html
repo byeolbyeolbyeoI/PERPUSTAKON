@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Page App</title>
+    <style> body {
+        --nav-width: 200px;
+        margin: 0 0 0 var(--nav-width);
+        font-family: 'Quicksand', sans-serif;
+        font-size: 18px;
+    }
+    
+    .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--nav-width);
+        height: 100vh;
+        background: #222222;
+    }
+    
+    .nav__link {
+        display: block;
+        padding: 12px 18px;
+        text-decoration: none;
+        color: #eeeeee;
+        font-weight: 500;
+    }
+    
+    .nav__link:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    #app {
+        margin: 2em;
+        line-height: 1.5;
+        font-weight: 500;
+    }
+    
+    a {
+        color: #009579;
+    }</style>
+</head>
+<body>
+    <form class="form">
+        <input type="text" name="username" placeholder="Username" required> </input> 
+        <input type="text" name="password" placeholder="Password" required> </input> 
+        <button type="submit" id="submit-button">Login</button>
+        <div class="div-response"></div>
+    </form>
+    <script> 
+        const formE1 = document.querySelector('.form');
+        const div = document.querySelector('.div-response');
+
+        formE1.addEventListener('submit', event => {
+            event.preventDefault();
+
+            const formData = new FormData(formE1);
+            const username = formData.get('username');
+            const password = formData.get('password');
+
+            fetch('http://localhost:9000/loginHandler', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify ({
+                    username : username,
+                    password : password,
+                }),
+            })
+                .then(res => res.json())
+                .then(data => function() {
+                    if(data.)
+                })
+                .catch(error => console.log(error))
+        });
+    </script>
+</body>
+
+</html>

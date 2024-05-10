@@ -8,7 +8,7 @@ import (
 )
 
 func (h *Handler) BorrowBook(c *fiber.Ctx) error {
-	var data models.Borrow
+	var data models.Borrow	
 	userRepository := repository.UserRepository{DB: h.DB}
 	bookRepository := repository.BookRepository{DB: h.DB}
 	borrowRepository := repository.BorrowRepository{DB: h.DB}
@@ -17,7 +17,7 @@ func (h *Handler) BorrowBook(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
 				"success": false,
-				"message": "Unable converting the params",
+				"message": "Unable parsing the body",
 				"code":    err.Error(),
 			},
 		)

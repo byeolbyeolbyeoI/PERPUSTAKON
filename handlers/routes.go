@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 
+
 	"perpustakaan/middleware"
 	"perpustakaan/config"
 	_ "perpustakaan/docs"
@@ -25,7 +26,6 @@ func NewHandler() (*Handler, error) {
 	}, nil
 }
 
-
 func SetupRoutes(app *fiber.App) {
 	handler, err := NewHandler()
 
@@ -42,6 +42,7 @@ func SetupRoutes(app *fiber.App) {
 		return c.Next()
 	})
 
+	app.Static("/frontend", "./public")
 	//swagger 
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
@@ -71,5 +72,10 @@ func SetupRoutes(app *fiber.App) {
 	// librarian
 	app.Post("/borrowBook", middleware.OnlyLibrarian, handler.BorrowBook)
 	app.Post("/returnBook", middleware.OnlyLibrarian, handler.ReturnBook)
-}
 
+	app.Get("/login", handler.Login)
+	app.Get("/librarian/dashboard", handler.LibrarianDashboard)
+	app.Get("/librarian/addBook", handler.LibrarianAddBook)
+	app.Get("/librarian/borrow", handler.LibrarianBorrow)
+	app.Get("/librarian/return", handler.LibrarianReturn)
+}

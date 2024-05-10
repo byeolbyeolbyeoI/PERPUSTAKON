@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
@@ -50,8 +51,9 @@ func (s *UserRepository) CreateUser(user models.UserInput) *APIError.APIError {
 		return nil
 	}
 
+	fmt.Println("aman sampe sini")
 	// if no err, the Scan() function scanned a row, meaning the username is already exists
-	return APIError.NewAPIError(fiber.StatusConflict, "Username already exists", err.Error())
+	return APIError.NewAPIError(fiber.StatusConflict, "Username already exists", "USERNAME_ERROR")
 }
  
 func (s *UserRepository) CheckPassword(user models.UserInput, dbUser models.User) *APIError.APIError {
@@ -77,7 +79,7 @@ func (s *UserRepository) GetUserById(id int) (models.User, *APIError.APIError) {
 	var dbUser models.User
 	err := s.DB.QueryRow("SELECT id, username, password, role FROM users WHERE id=?", id).Scan(&dbUser.Id, &dbUser.Username, &dbUser.Password, &dbUser.Role)
 	if err == sql.ErrNoRows {
-		return dbUser, APIError.NewAPIError(fiber.StatusInternalServerError, "Id is not registered", err.Error())
+		return dbUser, APIError.NewAPIError(fiber.StatusInternalServerError, "Id is not registered", "no rows")
 	}
 	return dbUser, nil
 }

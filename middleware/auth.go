@@ -14,18 +14,22 @@ func OnlyAdmin(c *fiber.Ctx) error {
 	if !ok {
 		return c.Status(fiber.StatusUnauthorized).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": "You are not logged in",
-					"code":    "AUTHORIZE_ERROR"}})
+				"success": false,
+				"message": "You are not logged in",
+				"code":    "User not logged in",
+			},
+		)
 	}
 
 	tokenString := GetTokenString(c)
 	if tokenString == "" {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": "Error retrieving JWT Token",
-					"code":    "TOKEN_ERROR"}})
+				"success": false,
+				"message": "Error retrieving JWT token",
+				"code":    "JWT Token error",
+			},
+		)
 	}
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -43,10 +47,22 @@ func OnlyAdmin(c *fiber.Ctx) error {
 		// if exp, id not valid
 		role := fmt.Sprint(claims["role"])
 		if role != "admin" {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "youre not an admin"})
+			return c.Status(fiber.StatusUnauthorized).JSON(
+				fiber.Map{
+					"success": false,
+					"message": "You are not an admin",
+					"code":    "NOT_ADMIN",
+				},
+			)
 		}
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+			return c.Status(fiber.StatusUnauthorized).JSON(
+				fiber.Map{
+					"success": false,
+					"message": "Error claiming role",
+					"code":    err.Error(),
+				},
+			)
 		}
 	}
 
@@ -58,18 +74,22 @@ func OnlyLibrarian(c *fiber.Ctx) error {
 	if !ok {
 		return c.Status(fiber.StatusUnauthorized).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": "You are not logged in",
-					"code":    "AUTHORIZE_ERROR"}})
+				"success": false,
+				"message": "You are not logged in",
+				"code":    "User not logged in",
+			},
+		)
 	}
 
 	tokenString := GetTokenString(c)
 	if tokenString == "" {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": "Error retrieving JWT Token",
-					"code":    "TOKEN_ERROR"}})
+				"success": false,
+				"message": "Error retrieving JWT token",
+				"code":    "JWT Token error",
+			},
+		)
 	}
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -89,16 +109,20 @@ func OnlyLibrarian(c *fiber.Ctx) error {
 		if role != "librarian" {
 			return c.Status(fiber.StatusUnauthorized).JSON(
 				fiber.Map{
-					"error": fiber.Map{
-						"message": "You are not a librarian",
-						"code":    "AUTHORIZE_ERROR"}})
+					"success": false,
+					"message": "You are not a librarian",
+					"code":    err.Error(),
+				},
+			)
 		}
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(
 				fiber.Map{
-					"error": fiber.Map{
-						"message": err.Error(),
-						"code":    err.Error()}})
+					"success": false,
+					"message": "Error claiming role",
+					"code":    err.Error(),
+				},
+			)
 		}
 	}
 
@@ -110,9 +134,11 @@ func NotLoggedIn(c *fiber.Ctx) error {
 	if ok {
 		return c.Status(fiber.StatusUnauthorized).JSON(
 			fiber.Map{
-				"error": fiber.Map{
-					"message": "You are already logged in",
-					"code":    "AUTHORIZE_ERROR"}})
+				"success": false,
+				"message": "You are already logged in",
+				"code":    "User already logged in",
+			},
+		)
 	}
 
 	return c.Next()
