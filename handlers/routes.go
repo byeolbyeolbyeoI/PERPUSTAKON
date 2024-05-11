@@ -8,7 +8,6 @@ import (
 
 	"perpustakaan/middleware"
 	"perpustakaan/config"
-	_ "perpustakaan/docs"
 )
 
 type Handler struct {

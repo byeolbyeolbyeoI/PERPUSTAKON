@@ -10,7 +10,6 @@ import (
 	"perpustakaan/models"
 	"perpustakaan/repository"
 	"perpustakaan/service"
-	_ "perpustakaan/docs"
 )
 
 // @Summary Signup a new user
