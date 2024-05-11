@@ -1,7 +1,0 @@
-host: localhost:9000
-info:
-  contact: {}
-  title: PERPUSTAKON
-  version: "0.2"
-paths: {}
-swagger: "2.0"
