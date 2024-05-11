@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrow Book</title>
+    <style>
+    body {
+        --nav-width: 200px;
+        margin: 0 0 0 var(--nav-width);
+        font-family: 'Quicksand', sans-serif;
+        font-size: 18px;
+    }
+
+    .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--nav-width);
+        height: 100vh;
+        background: #222222;
+    }
+
+    .nav__link {
+        display: block;
+        padding: 16px 22px;
+        text-decoration: none;
+        color: #eeeeee;
+        font-weight: 500;
+    }
+
+    .nav__link:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    #app {
+        margin: 2em;
+        line-height: 1.5;
+        font-weight: 500;
+    }
+
+    a {
+        color: #009579;
+    }
+
+    .form {
+        font-size: 16px
+    }
+    
+    .form * {
+        box-sizing: border-box;
+        line-height: 1.5;
+    }
+
+    .form__title {
+        font-size: 2em;
+        font-weight: 600;
+    }
+
+    .form__item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form__item > * {
+        align-self: flex-start;
+    }
+
+    .form__label {
+        font-weight: 600;
+        padding: 10px 0;
+    }
+
+    .form__input {
+        -webkit-appearance: none;
+
+        width: 100%;
+        max-width: 425px;
+
+        padding: 0.8em;
+        font-size: 0.9em;
+        font-family: sans-serif;
+
+        outline: none;
+        border: 1px solid #dddddd;
+        border-radius: 4px;
+        background: #f9f9f9;
+        transition: background 0.25s, border-color 0.25s, color 0.25s;
+    }
+
+    .form__input:focus {
+        background: #ffffff;
+    }
+
+    .form__input::placeholder {
+        color: #bbbbbb;
+    }
+
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="/librarian/dashboard" class="nav__link" data-link>Dashboard</a>
+        <a href="/librarian/bookList" class="nav__link" data-link>Book List</a>
+        <a href="/librarian/userList" class="nav__link" data-link>User List</a>
+        <a href="/librarian/addBook" class="nav__link" data-link>Add Book</a>
+        <a href="/librarian/deleteBook" class="nav__link" data-link>Delete Book</a>
+        <a href="/librarian/borrow" class="nav__link" data-link>Borrow Book</a>
+        <a href="/librarian/return" class="nav__link" data-link>Return Book</a>
+    </nav>
+    <div id="app">
+        <form class="form">
+            <div class="form__title">Add Book</div>
+            <div class="form__item">
+                <label for="title" class="form__label">Title</label>
+                <input type="text" class="form__input" name="title" id="title" placeholder="Enter the book's title">
+            </div>
+            <div class="form__item">
+                <label for="author" class="form__label">Author</label>
+                <input type="text" class="form__input" name="author" id="author" placeholder="Enter the book's author">
+            </div>
+            <div class="form__item">
+                <label for="genre" class="form__label">Genre</label>
+                <input type="text" class="form__input" name="genre" id="genre" placeholder="Enter the book's genres">
+            </div>
+            <div class="form__item">
+                <label for="synopsis" class="form__label">Synopsis</label>
+                <input type="text" class="form__input" name="synopsis" id="synopsis" placeholder="Enter the book's synopsis">
+            </div>
+            <div class="form__item">
+                <label for="release-year" class="form__label">Release Year</label>
+                <input type="number" class="form__input" name="release-year" id="release-year" placeholder="Enter the book's release year">
+            </div>
+            <br>
+            <button type="submit" id="submit-button">Submit</button>
+            <div class="div-response"></div>
+        </form>
+    </div>
+    <script> 
+        const form = document.querySelector('.form');
+        const div = document.querySelector('.div-response');
+
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const title = formData.get('title');
+            const author = formData.get('author');
+            const genre = formData.get('genre');
+            const genreArray = genre.split(",");
+            const synopsis = formData.get('synopsis');
+            const releaseYear= formData.get('release-year');
+            const available = true;
+
+            const releaseYearValue = parseInt(releaseYear);
+
+            fetch('http://localhost:9000/addBook', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify ({
+                    book : {
+                        title: title,
+                        author: author,
+                        genre: genreArray,
+                        synopsis: synopsis,
+                        releaseYear: releaseYearValue 
+                    },
+                    available: available
+                }),
+            })
+                .then(res => res.json())
+                .then(data => console.log(data))
+                .catch(error => console.log(error))
+        });
+    </script>
+</body>
+</html>

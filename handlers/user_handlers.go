@@ -44,7 +44,11 @@ func (h *Handler) SignupHandler(c *fiber.Ctx) error {
 		)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User created successfully"})
+	return c.Status(fiber.StatusOK).JSON(
+		fiber.Map{
+			"success": true,
+			"message": "Successfully signed up",
+		})
 }
 
 func (h *Handler) LoginHandler(c *fiber.Ctx) error {

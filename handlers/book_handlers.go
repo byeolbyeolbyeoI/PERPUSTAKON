@@ -74,7 +74,7 @@ func (h *Handler) GetBook(c *fiber.Ctx) error {
 
 func (h *Handler) DeleteBook(c *fiber.Ctx) error {
 	type bookStruct struct {
-		Id int `json:"id"`
+		Id int `json:"bookId"`
 	}
 
 	var book bookStruct

@@ -34,9 +34,11 @@ func SetupRoutes(app *fiber.App) {
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(
 				fiber.Map{
-					"error": fiber.Map{
-						"message": "Unable to connect to the database",
-						"code": "DATABASE_ERROR"}})	
+					"success": false,
+					"message": "Error connecting to the database",
+					"code": err.Error(),
+				},
+			)
 		}
 
 		return c.Next()
@@ -74,8 +76,11 @@ func SetupRoutes(app *fiber.App) {
 	app.Post("/returnBook", middleware.OnlyLibrarian, handler.ReturnBook)
 
 	app.Get("/login", handler.Login)
-	app.Get("/librarian/dashboard", handler.LibrarianDashboard)
+
+	app.Get("/librarian/bookList", handler.LibrarianBookList)
+	app.Get("/librarian/userList", handler.LibrarianUserList)
 	app.Get("/librarian/addBook", handler.LibrarianAddBook)
+	app.Get("/librarian/deleteBook", handler.LibrarianDeleteBook)
 	app.Get("/librarian/borrow", handler.LibrarianBorrow)
 	app.Get("/librarian/return", handler.LibrarianReturn)
 }
