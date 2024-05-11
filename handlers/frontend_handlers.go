@@ -57,3 +57,43 @@ func (h *Handler) LibrarianReturn(c *fiber.Ctx) error {
 
 	return c.Render("./frontend/html/librarian/return.html", nil)
 }
+
+func (h *Handler) AdminUserList(c *fiber.Ctx) error {
+	if middleware.IsAdmin(c) == false {
+		return c.Render("./frontend/html/error-auth.html", nil)
+	}
+
+	return c.Render("./frontend/html/admin/user-list.html", nil)
+}
+
+func (h *Handler) AdminAddUser(c *fiber.Ctx) error {
+	if middleware.IsAdmin(c) == false {
+		return c.Render("./frontend/html/error-auth.html", nil)
+	}
+
+	return c.Render("./frontend/html/admin/add-user.html", nil)
+}
+
+func (h *Handler) AdminDeleteUser(c *fiber.Ctx) error {
+	if middleware.IsAdmin(c) == false {
+		return c.Render("./frontend/html/error-auth.html", nil)
+	}
+
+	return c.Render("./frontend/html/admin/delete-user.html", nil)
+}
+
+func (h *Handler) UserDashboard(c *fiber.Ctx) error {
+	if middleware.IsUser(c) == false {
+		return c.Render("./frontend/html/error-auth.html", nil)
+	}
+
+	return c.Render("./frontend/html/user/dashboard.html", nil)
+}
+
+func (h *Handler) UserBookList(c *fiber.Ctx) error {
+	if middleware.IsUser(c) == false {
+		return c.Render("./frontend/html/error-auth.html", nil)
+	}
+
+	return c.Render("./frontend/html/user/book-list.html", nil)
+}

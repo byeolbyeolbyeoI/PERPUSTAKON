@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Page App</title>
+    <style>
+    body {
+        --nav-width: 200px;
+        margin: 0 0 0 var(--nav-width);
+        font-family: 'Quicksand', sans-serif;
+        font-size: 18px;
+    }
+
+    .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--nav-width);
+        height: 100vh;
+        background: #222222;
+    }
+
+    .nav__link {
+        display: block;
+        padding: 16px 22px;
+        text-decoration: none;
+        color: #eeeeee;
+        font-weight: 500;
+    }
+
+    .nav__link:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    #app {
+        margin: 2em;
+        line-height: 1.5;
+        font-weight: 500;
+    }
+
+    a {
+        color: #009579;
+    }
+
+    .content-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        min-width: 1650px;
+        border-radius: 5px 5px 0 0;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .content-table thead tr {
+        background-color: #222222;
+        color: #ffffff;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .content-table th,
+    .content-table td {
+        padding: 12px 15px;
+    }
+
+    .content-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+    }
+    .content-table tbody tr:nth-of-type(even) {  
+        background-color: #f3f3f3;
+    }
+
+    .content-table tbody tr:last-of-type {  
+        border-bottom: 2px solid #222222;
+    }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="/user/dashboard" class="nav__link" data-link>Dashboard</a>
+        <a href="/user/bookList" class="nav__link" data-link>Book List</a>
+    </nav>
+    <script>
+        fetch("http://localhost:9000/getBooks")
+        .then(function(res) {
+            return res.json();
+        })
+        .then(function(books) {
+            let placeholder = document.querySelector("#content");
+            let out = "";
+            for(const element of books.data) {
+                out += `
+                <tr>
+                    <td>${element.book.id}</td>
+                    <td>${element.book.title}</td>
+                    <td>${element.book.author}</td>
+                    <td>${element.book.genre}</td>
+                    <td>${element.book.synopsis}</td>
+                    <td>${element.book.releaseYear}</td>
+                    <td>${element.available}</td>
+                </tr>
+                `;
+            }
+
+            placeholder.innerHTML = out;
+        });
+    </script>
+    <div id="app">
+    <table id="table" class="content-table"> 
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Genres</th>
+                <th>Synopsis</th>
+                <th>Release Year</th>
+                <th>Availability</th>
+            </tr>
+        </thead>
+        <tbody id="content">
+
+        </tbody>
+    </table>
+    </div>
+</body>
+</html>

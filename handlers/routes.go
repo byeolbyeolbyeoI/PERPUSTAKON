@@ -82,4 +82,16 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/librarian/deleteBook", handler.LibrarianDeleteBook)
 	app.Get("/librarian/borrow", handler.LibrarianBorrow)
 	app.Get("/librarian/return", handler.LibrarianReturn)
+
+	// app.Get("/admin/dashboard", handler.AdminDashboard)
+	app.Get("/admin/userList", handler.AdminUserList)
+	app.Get("/admin/addUser", handler.AdminAddUser)
+	app.Get("/admin/deleteUser", handler.AdminDeleteUser)
+
+	app.Get("/user/dashboard", handler.UserDashboard)
+	app.Get("/user/bookList", handler.UserBookList)
+
+	app.Get("/tes", func(c *fiber.Ctx) error {
+		return c.Render("./frontend/html/tes.html", nil)
+	})
 }
