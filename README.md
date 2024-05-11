@@ -19,6 +19,24 @@ Frontend :
 
 This library management web application is high in features. It uses JWT token to authenticate users. There are 3 user roles in this web-app, admin, librarian and users. Admin deals with adding and deleting users, librarian deals with adding, deleting, borrowing and returning books, and users can see their status, the book list and it's availability. All that functionality is written magnificiently with a beatiful architecture so it is high in code-readability.
 
+## Endpoints
+
+### Frontend
+
+1. `/user/dashboard`
+2. `/user/bookList`
+3. `/admin/dashboard`
+4. `/admin/userList`
+5. `/admin/addUser`
+6. `/admin/deleteUser`
+7. `/librarian/dashboard`
+8. `/librarian/bookList`
+9. `/librarian/userList`
+10. `/librarian/addBook`
+11. `/librarian/deleteBook`
+12. `/librarian/borrowBook`
+13. `/librarian/returnBook`
+
 ## How to run
 
 ### Install Go Programming Language

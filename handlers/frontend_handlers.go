@@ -42,20 +42,20 @@ func (h *Handler) LibrarianDeleteBook(c *fiber.Ctx) error {
 	return c.Render("./frontend/html/librarian/delete-book.html", nil)
 }
 
-func (h *Handler) LibrarianBorrow(c *fiber.Ctx) error {
+func (h *Handler) LibrarianBorrowBook(c *fiber.Ctx) error {
 	if middleware.IsLibrarian(c) == false {
 		return c.Render("./frontend/html/error-auth.html", nil)
 	}
 
-	return c.Render("./frontend/html/librarian/borrow.html", nil)
+	return c.Render("./frontend/html/librarian/borrow-book.html", nil)
 }
 
-func (h *Handler) LibrarianReturn(c *fiber.Ctx) error {
+func (h *Handler) LibrarianReturnBook(c *fiber.Ctx) error {
 	if middleware.IsLibrarian(c) == false {
 		return c.Render("./frontend/html/error-auth.html", nil)
 	}
 
-	return c.Render("./frontend/html/librarian/return.html", nil)
+	return c.Render("./frontend/html/librarian/return-book.html", nil)
 }
 
 func (h *Handler) AdminUserList(c *fiber.Ctx) error {

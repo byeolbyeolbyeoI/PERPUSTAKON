@@ -95,7 +95,6 @@
     .form__input::placeholder {
         color: #bbbbbb;
     }
-
     </style>
 </head>
 <body>
@@ -105,22 +104,18 @@
         <a href="/librarian/userList" class="nav__link" data-link>User List</a>
         <a href="/librarian/addBook" class="nav__link" data-link>Add Book</a>
         <a href="/librarian/deleteBook" class="nav__link" data-link>Delete Book</a>
-        <a href="/librarian/borrow" class="nav__link" data-link>Borrow Book</a>
-        <a href="/librarian/return" class="nav__link" data-link>Return Book</a>
+        <a href="/librarian/borrowBook" class="nav__link" data-link>Borrow Book</a>
+        <a href="/librarian/returnBook" class="nav__link" data-link>Return Book</a>
     </nav>
     <div id="app">
         <form class="form">
-            <div class="form__title">Borrow Book</div>
+            <div class="form__title">Return Book</div>
             <div class="form__item">
                 <label for="user-id" class="form__label">User ID</label>
-                <input type="number" class="form__input" name="user-id" id="user-id" placeholder="enter the user's id"></input>
-            </div>
-            <div class="form__item">
-                <label for="book-id" class="form__label">Book ID</label>
-                <input type="number" class="form__input" name="book-id" id="book-id" placeholder="Enter the book's Id"></input>
+                <input type="number" class="form__input" name="user-id" id="user-id" placeholder="enter the user's Id"></input>
             </div>
             <br>
-            <button type="submit" id="submit-button">Borrow</button>
+            <button type="submit" id="submit-button">Return</button>
             <div class="div-response"></div>
         </form>
     </div>
@@ -133,17 +128,14 @@
 
             const formData = new FormData(form);
             const userId = formData.get('user-id');
-            const bookId = formData.get('book-id');
 
             const userIdValue = parseInt(userId);
-            const bookIdValue = parseInt(bookId);
 
-            fetch('http://localhost:9000/borrowBook', {
+            fetch('http://localhost:9000/returnBook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json'},
                 body: JSON.stringify ({
                     userId : userIdValue,
-                    bookId : bookIdValue,
                 }),
             })
                 .then(res => res.json())
