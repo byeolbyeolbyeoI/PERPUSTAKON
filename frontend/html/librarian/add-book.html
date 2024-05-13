@@ -4,99 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Borrow Book</title>
-    <style>
-    body {
-        --nav-width: 200px;
-        margin: 0 0 0 var(--nav-width);
-        font-family: 'Quicksand', sans-serif;
-        font-size: 18px;
-    }
-
-    .nav {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: var(--nav-width);
-        height: 100vh;
-        background: #222222;
-    }
-
-    .nav__link {
-        display: block;
-        padding: 16px 22px;
-        text-decoration: none;
-        color: #eeeeee;
-        font-weight: 500;
-    }
-
-    .nav__link:hover {
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    #app {
-        margin: 2em;
-        line-height: 1.5;
-        font-weight: 500;
-    }
-
-    a {
-        color: #009579;
-    }
-
-    .form {
-        font-size: 16px
-    }
-    
-    .form * {
-        box-sizing: border-box;
-        line-height: 1.5;
-    }
-
-    .form__title {
-        font-size: 2em;
-        font-weight: 600;
-    }
-
-    .form__item {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .form__item > * {
-        align-self: flex-start;
-    }
-
-    .form__label {
-        font-weight: 600;
-        padding: 10px 0;
-    }
-
-    .form__input {
-        -webkit-appearance: none;
-
-        width: 100%;
-        max-width: 425px;
-
-        padding: 0.8em;
-        font-size: 0.9em;
-        font-family: sans-serif;
-
-        outline: none;
-        border: 1px solid #dddddd;
-        border-radius: 4px;
-        background: #f9f9f9;
-        transition: background 0.25s, border-color 0.25s, color 0.25s;
-    }
-
-    .form__input:focus {
-        background: #ffffff;
-    }
-
-    .form__input::placeholder {
-        color: #bbbbbb;
-    }
-
-    </style>
+    <link rel="stylesheet" href="/prefix/styles/librarian/add-book.css">
 </head>
 <body>
     <nav class="nav">
@@ -136,42 +44,6 @@
             <div class="div-response"></div>
         </form>
     </div>
-    <script> 
-        const form = document.querySelector('.form');
-        const div = document.querySelector('.div-response');
-
-        form.addEventListener('submit', event => {
-            event.preventDefault();
-
-            const formData = new FormData(form);
-            const title = formData.get('title');
-            const author = formData.get('author');
-            const genre = formData.get('genre');
-            const genreArray = genre.split(",");
-            const synopsis = formData.get('synopsis');
-            const releaseYear= formData.get('release-year');
-            const available = true;
-
-            const releaseYearValue = parseInt(releaseYear);
-
-            fetch('http://localhost:9000/addBook', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify ({
-                    book : {
-                        title: title,
-                        author: author,
-                        genre: genreArray,
-                        synopsis: synopsis,
-                        releaseYear: releaseYearValue 
-                    },
-                    available: available
-                }),
-            })
-                .then(res => res.json())
-                .then(data => console.log(data))
-                .catch(error => console.log(error))
-        });
-    </script>
 </body>
+<script src="/prefix/script/librarian/add-book.js"></script>
 </html>

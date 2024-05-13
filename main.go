@@ -10,5 +10,6 @@ import (
 // @host localhost:9000 
 func main(){
 	app := fiber.New()
+	app.Static("/prefix", "./frontend")
 	bootstrap.InitializeApp(app)
 }

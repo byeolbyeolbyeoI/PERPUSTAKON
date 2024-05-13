@@ -87,27 +87,7 @@
         <a href="/librarian/borrowBook" class="nav__link" data-link>Borrow Book</a>
         <a href="/librarian/returnBook" class="nav__link" data-link>Return Book</a>
     </nav>
-    <script>
-        fetch("http://localhost:9000/getUsers")
-        .then(function(res) {
-            return res.json();
-        })
-        .then(function(users) {
-            let placeholder = document.querySelector("#content");
-            let out = "";
-            for(const element of users.data) {
-                out += `
-                <tr>
-                    <td>${element.id}</td>
-                    <td>${element.username}</td>
-                    <td>${element.role}</td>
-                </tr>
-                `;
-            }
-
-            placeholder.innerHTML = out;
-        });
-    </script>
+    <script src="/prefix/script/librarian/user-list.js"></script>
     <div id="app">
     <table id="table" class="content-table"> 
         <thead>

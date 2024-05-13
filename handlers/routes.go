@@ -43,7 +43,6 @@ func SetupRoutes(app *fiber.App) {
 		return c.Next()
 	})
 
-	app.Static("/frontend", "./public")
 	//swagger 
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
