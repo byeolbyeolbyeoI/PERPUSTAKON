@@ -37,6 +37,23 @@ This library management web application is high in features. It uses JWT token t
 12. `/librarian/borrowBook`
 13. `/librarian/returnBook`
 
+### API
+
+1. `/signupHandler`
+2. `/loginHandler`
+3. `/getUsers`
+4. `/getUserById/:id`
+5. `/getUserById/:id`
+6. `/addUser`
+7. `/deleteUser`
+8. `/getBooks`
+9. `/getBookById/:id`
+10. `/getBookByTitle/:title`
+11. `/addBook`
+12. `/deleteBook`
+13. `/borrowBook`
+14. `/returnBook`
+
 ## How to run
 
 ### Install Go Programming Language
