@@ -66,6 +66,8 @@ func SetupRoutes(app *fiber.App) {
 	// admin
 	app.Get("/getUsers", handler.GetUsers)
 	app.Get("/getUserById/:id", middleware.OnlyAdmin, handler.GetUser)
+	app.Post("/addUser", handler.AddUser)
+	app.Delete("/deleteUser", handler.DeleteUser)
 
 	// borrow
 
