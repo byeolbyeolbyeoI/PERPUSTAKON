@@ -19,7 +19,7 @@ func (h *Handler) GetBooks(c *fiber.Ctx) error {
 			fiber.Map{
 				"success": APIError.Success,
 				"message": APIError.Message,
-				"code": APIError.Code,
+				"code":    APIError.Code,
 			},
 		)
 	}
@@ -39,20 +39,20 @@ func (h *Handler) GetBook(c *fiber.Ctx) error {
 			fiber.Map{
 				"success": false,
 				"message": "Params invalid",
-				"code": err.Error(),
+				"code":    err.Error(),
 			},
 		)
 	}
 
 	var book models.LibraryBook
-	var bookRepository = repository.BookRepository{DB: h.DB} 
+	var bookRepository = repository.BookRepository{DB: h.DB}
 	book, APIError := bookRepository.GetBookById(int(id))
 	if APIError != nil {
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
 				"success": APIError.Success,
 				"message": APIError.Message,
-				"code": APIError.Code,
+				"code":    APIError.Code,
 			},
 		)
 	}
@@ -61,13 +61,13 @@ func (h *Handler) GetBook(c *fiber.Ctx) error {
 		"success": true,
 		"message": "Book data retrieved successfully",
 		"data": fiber.Map{
-			"id": book.Book.Id,
-			"title": book.Book.Title,
-			"author": book.Book.Author,
-			"genres": book.Book.Genres,
-			"synopsis": book.Book.Synopsis,
+			"id":          book.Book.Id,
+			"title":       book.Book.Title,
+			"author":      book.Book.Author,
+			"genres":      book.Book.Genres,
+			"synopsis":    book.Book.Synopsis,
 			"releaseYear": book.Book.ReleaseYear,
-			"available": book.Available,
+			"available":   book.Available,
 		},
 	})
 }
@@ -84,18 +84,18 @@ func (h *Handler) DeleteBook(c *fiber.Ctx) error {
 			fiber.Map{
 				"success": false,
 				"message": "Input not valid",
-				"code": err.Error(),
+				"code":    err.Error(),
 			},
 		)
 	}
 
-	_, err := h.DB.Exec("DELETE FROM books WHERE id=?", book.Id)	
+	_, err := h.DB.Exec("DELETE FROM books WHERE id=?", book.Id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
 				"success": false,
 				"message": "Error deleting book data",
-				"code": err.Error(),
+				"code":    err.Error(),
 			},
 		)
 	}
@@ -115,7 +115,7 @@ func (h *Handler) AddBook(c *fiber.Ctx) error {
 			fiber.Map{
 				"success": false,
 				"message": "Input not valid",
-				"code": err.Error(),
+				"code":    err.Error(),
 			},
 		)
 	}
@@ -126,7 +126,7 @@ func (h *Handler) AddBook(c *fiber.Ctx) error {
 			fiber.Map{
 				"success": APIError.Success,
 				"message": APIError.Message,
-				"code": APIError.Code,
+				"code":    APIError.Code,
 			},
 		)
 	}
@@ -136,7 +136,6 @@ func (h *Handler) AddBook(c *fiber.Ctx) error {
 		"message": "Book added successfully",
 	})
 }
-
 
 func (h *Handler) SearchBook(c *fiber.Ctx) error {
 	var title = c.Params("title")
@@ -150,14 +149,14 @@ func (h *Handler) SearchBook(c *fiber.Ctx) error {
 			fiber.Map{
 				"success": APIError.Success,
 				"message": APIError.Message,
-				"code": APIError.Code,
+				"code":    APIError.Code,
 			},
 		)
 	}
 
 	var found = false
 	var index int
-	
+
 	for key, book := range books {
 		if book.Book.Title == title {
 			index = key
@@ -171,7 +170,7 @@ func (h *Handler) SearchBook(c *fiber.Ctx) error {
 			fiber.Map{
 				"success": false,
 				"message": "Book not found",
-				"code": "Title not found",
+				"code":    "Title not found",
 			},
 		)
 	}
@@ -180,13 +179,13 @@ func (h *Handler) SearchBook(c *fiber.Ctx) error {
 		"success": true,
 		"message": "Succes retrieving book data",
 		"data": fiber.Map{
-			"id": books[index].Book.Id,
-			"title": books[index].Book.Title,
-			"author": books[index].Book.Author,
-			"genres": books[index].Book.Genres,
-			"synopsis": books[index].Book.Synopsis,
+			"id":          books[index].Book.Id,
+			"title":       books[index].Book.Title,
+			"author":      books[index].Book.Author,
+			"genres":      books[index].Book.Genres,
+			"synopsis":    books[index].Book.Synopsis,
 			"releaseYear": books[index].Book.ReleaseYear,
-			"available": books[index].Available,
+			"available":   books[index].Available,
 		},
 	})
 }

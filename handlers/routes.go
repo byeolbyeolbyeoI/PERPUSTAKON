@@ -92,7 +92,11 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/user/dashboard", handler.UserDashboard)
 	app.Get("/user/bookList", handler.UserBookList)
 
-	app.Get("/tes", func(c *fiber.Ctx) error {
-		return c.Render("./frontend/html/tes.html", nil)
+	app.Get("/login", func(c *fiber.Ctx) error {
+		return c.Render("./frontend/views/login.html", nil)
+	})
+
+	app.Get("/signup", func(c *fiber.Ctx) error {
+		return c.Render("./frontend/views/signup.html", nil)
 	})
 }

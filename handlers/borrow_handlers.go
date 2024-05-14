@@ -3,6 +3,8 @@ package handlers
 import (
 	"github.com/gofiber/fiber/v2"
 
+	"fmt"
+
 	"perpustakaan/models"
 	"perpustakaan/repository"
 )
@@ -136,7 +138,7 @@ func (h *Handler) ReturnBook(c *fiber.Ctx) error {
 		)
 	}
 
-	APIError = borrowRepository.ReturnBook(data)
+	denda, APIError := borrowRepository.ReturnBook(data)
 	if APIError != nil {
 		return c.Status(APIError.Status).JSON(
 			fiber.Map{
@@ -147,10 +149,22 @@ func (h *Handler) ReturnBook(c *fiber.Ctx) error {
 		)
 	}
 
+	fmt.Println("denda :", denda)
+
+	if denda == 0 {
+		return c.Status(fiber.StatusOK).JSON(
+			fiber.Map{
+				"success": true,
+				"message": "Successfully returned the book",
+			},
+		)
+	}
+
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
-			"success": true,
-			"message": "Successfully returned the book",
+			"success": true, 
+			"message": "Succesfully returned the book",
+			"denda": denda,
 		},
 	)
 }

@@ -4,20 +4,18 @@ Golang web-app to help library management.
 
 ## Tech Stack
 
-Backend :
+### Backend :
 
 1. Gofiber
 2. MySQL
 
-Frontend :
+### Frontend :
 
 1. HTML
 2. CSS
 3. Javascript
 
 ## Overview
-
-This library management web application is high in features. It uses JWT token to authenticate users. There are 3 user roles in this web-app, admin, librarian and users. Admin deals with adding and deleting users, librarian deals with adding, deleting, borrowing and returning books, and users can see their status, the book list and it's availability. All that functionality is written magnificiently with a beatiful architecture so it is high in code-readability.
 
 ## Endpoints
 

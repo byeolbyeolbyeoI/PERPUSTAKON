@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrow Book</title>
+    <link rel="stylesheet" href="/prefix/styles/librarian/add-book.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="/librarian/dashboard" class="nav__link" data-link>Dashboard</a>
+        <a href="/librarian/bookList" class="nav__link" data-link>Book List</a>
+        <a href="/librarian/userList" class="nav__link" data-link>User List</a>
+        <a href="/librarian/addBook" class="nav__link" data-link>Add Book</a>
+        <a href="/librarian/deleteBook" class="nav__link" data-link>Delete Book</a>
+        <a href="/librarian/borrowBook" class="nav__link" data-link>Borrow Book</a>
+        <a href="/librarian/returnBook" class="nav__link" data-link>Return Book</a>
+    </nav>
+    <div id="app">
+        <form class="form">
+            <div class="form__title">Add Book</div>
+            <div class="form__item">
+                <label for="title" class="form__label">Title</label>
+                <input type="text" class="form__input" name="title" id="title" placeholder="Enter the book's title">
+            </div>
+            <div class="form__item">
+                <label for="author" class="form__label">Author</label>
+                <input type="text" class="form__input" name="author" id="author" placeholder="Enter the book's author">
+            </div>
+            <div class="form__item">
+                <label for="genre" class="form__label">Genre</label>
+                <input type="text" class="form__input" name="genre" id="genre" placeholder="Enter the book's genres">
+            </div>
+            <div class="form__item">
+                <label for="synopsis" class="form__label">Synopsis</label>
+                <input type="text" class="form__input" name="synopsis" id="synopsis" placeholder="Enter the book's synopsis">
+            </div>
+            <div class="form__item">
+                <label for="release-year" class="form__label">Release Year</label>
+                <input type="number" class="form__input" name="release-year" id="release-year" placeholder="Enter the book's release year">
+            </div>
+            <br>
+            <button type="submit" id="submit-button">Submit</button>
+            <div class="div-response"></div>
+        </form>
+    </div>
+</body>
+<script src="/prefix/script/librarian/add-book.js"></script>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>Login / Sign Up Form</title>
+    <link rel="shortcut icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/prefix/styles/style.css">
+</head>
+<body>
+    <div class="container">
+        <form class="form" id="signup">
+            <h1 class="form__title">Sign Up</h1>
+            <div class="form__message form__message--error"></div>
+            <div class="form__input-group">
+                <input type="text" id="username" name="username" class="form__input" autofocus placeholder="Username">
+            </div>
+            <div class="form__input-group">
+                <input type="password" class="form__input" name="password" id="password" autofocus placeholder="Password">
+            </div>
+            <div class="form__input-group">
+                <input type="password" class="form__input" name="confirm-password" id="confirm-password" autofocus placeholder="Confirm password">
+            </div>
+            <div class="form__input-error-message" id="error-message"></div>
+            <br>
+            <button class="form__button" type="submit">Sign Up</button>
+            <p class="form__text">
+                <a class="form__link" href="http://localhost:9000/login">Already have an account? Login</a>
+            </p>
+        </form>
+    </div>
+    <script>
+        const form = document.querySelector('.form');
+        const errorDiv = document.querySelector('.form__input-error-message');
+        const container = document.querySelector('.container')
+
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const username = formData.get('username');
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirm-password');
+            if(password != confirmPassword) {
+                errorDiv.innerHTML = `Please check your username or password`;
+                return;
+            }
+            const css = document.getElementById('error-message')
+            css.style.color = "#cc3333";
+
+            fetch('http://localhost:9000/signupHandler', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify ({
+                    username : username,
+                    password : password
+                }),
+            })
+                .then(res => res.json())
+                .then(function(data) {
+                    if(data.success === false) {
+                        errorDiv.innerHTML = `Please check your username or password`
+                    } else {
+                        const signupForm = document.getElementById('signup')
+                        signupForm.reset();
+                        css.style.color = "#4bb544";
+                        errorDiv.innerHTML = `Successfully signed up, redirecting to the login page...`
+                        setTimeout(() => {
+                            window.location.href = "http://localhost:9000/login";
+                        }, 3000);
+                    };
+                })
+                .catch(error => console.log(error))
+        });
+    </script>
+</body>

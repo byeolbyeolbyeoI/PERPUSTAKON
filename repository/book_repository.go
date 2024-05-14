@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 
 	"strconv"
 	"github.com/gofiber/fiber/v2"
@@ -91,7 +92,7 @@ func (b *BookRepository) AddBook(book models.LibraryBook) *APIError.APIError {
 }
 
 func (b *BookRepository) CheckBookAvailability(id int) (bool, *APIError.APIError) {
-	var availability bool
+	var availability string
 	err := b.DB.QueryRow("SELECT available FROM books WHERE id=?", id).Scan(&availability)
 	if err == sql.ErrNoRows {
 		return false, APIError.NewAPIError(fiber.StatusInternalServerError, "Book is not registered", err.Error())
@@ -100,7 +101,7 @@ func (b *BookRepository) CheckBookAvailability(id int) (bool, *APIError.APIError
 		return false, APIError.NewAPIError(fiber.StatusInternalServerError, "Error scanning rows", err.Error())
 	}
 
-	if availability == false {
+	if availability == "false" {
 		return false, nil
 	}
 
@@ -119,10 +120,11 @@ func (b *BookRepository) ToggleBookAvailability(id int) error {
 
 	availability = !availability
 
-	_, err = b.DB.Exec("UPDATE books SET available=? WHERE id=?", availability, id)
+	_, err = b.DB.Exec("UPDATE books SET available=? WHERE id=?", strconv.FormatBool(availability), id)
 	if err != nil {
 		return err
 	}
+	fmt.Println(availability)
 
 	return nil
 }
