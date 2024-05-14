@@ -41,16 +41,15 @@ Golang web-app to help library management.
 2. `/loginHandler`
 3. `/getUsers`
 4. `/getUserById/:id`
-5. `/getUserById/:id`
-6. `/addUser`
-7. `/deleteUser`
-8. `/getBooks`
-9. `/getBookById/:id`
-10. `/getBookByTitle/:title`
-11. `/addBook`
-12. `/deleteBook`
-13. `/borrowBook`
-14. `/returnBook`
+5. `/addUser`
+6. `/deleteUser`
+7. `/getBooks`
+8. `/getBookById/:id`
+9. `/getBookByTitle/:title`
+10. `/addBook`
+11. `/deleteBook`
+12. `/borrowBook`
+13. `/returnBook`
 
 ## How to run
 
