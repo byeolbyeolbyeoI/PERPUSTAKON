@@ -99,7 +99,8 @@ func (h *Handler) ReturnBook(c *fiber.Ctx) error {
 	if err := c.BodyParser(&inputData); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
-				"success": false, "message": "Unable converting the params",
+				"success": false, 
+				"message": "Unable converting the params",
 				"code":    err.Error(),
 			},
 		)
@@ -150,16 +151,6 @@ func (h *Handler) ReturnBook(c *fiber.Ctx) error {
 	}
 
 	fmt.Println("denda :", denda)
-
-	if denda == 0 {
-		return c.Status(fiber.StatusOK).JSON(
-			fiber.Map{
-				"success": true,
-				"message": "Successfully returned the book",
-			},
-		)
-	}
-
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
 			"success": true, 

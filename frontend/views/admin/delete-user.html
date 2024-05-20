@@ -15,13 +15,13 @@
         <a href="/admin/deleteUser" class="nav__link" data-link>Delete User</a>
     </nav>
     <div id="app">
-        <form class="form">
+        <form class="form" id="form">
             <div class="form__title">Delete User</div>
             <div class="form__item">
-                <label for="user-id" class="form__label">Book ID</label>
+                <label for="user-id" class="form__label">User ID</label>
                 <input type="number" class="form__input" name="user-id" id="user-id" placeholder="Enter the user's Id"></input>
             </div>
-            <br>
+            <div class="form__input-error-message" id="error-message" style="color: #cc3333; font-size: 0.85rem; margin-top: 0.4rem; margin-bottom: 0.4rem;"></div>
             <button type="submit" id="submit-button">Submit</button>
             <div class="div-response"></div>
         </form>

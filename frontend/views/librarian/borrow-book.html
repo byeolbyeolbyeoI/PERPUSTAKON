@@ -17,7 +17,7 @@
         <a href="/librarian/returnBook" class="nav__link" data-link>Return Book</a>
     </nav>
     <div id="app">
-        <form class="form">
+        <form class="form" id="form">
             <div class="form__title">Borrow Book</div>
             <div class="form__item">
                 <label for="user-id" class="form__label">User ID</label>
@@ -27,9 +27,8 @@
                 <label for="book-id" class="form__label">Book ID</label>
                 <input type="number" class="form__input" name="book-id" id="book-id" placeholder="Enter the book's Id"></input>
             </div>
-            <br>
+            <div class="form__input-error-message" id="error-message" style="color: #cc3333; font-size: 0.85rem; margin-top: 0.4rem; margin-bottom: 0.4rem;"></div>
             <button type="submit" id="submit-button">Borrow</button>
-            <div class="div-response"></div>
         </form>
     </div>
     <script src="/prefix/script/librarian/borrow-book.js"></script>

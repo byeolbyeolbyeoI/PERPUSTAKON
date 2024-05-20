@@ -58,7 +58,7 @@
                 .then(res => res.json())
                 .then(function(data) {
                     if(data.success === false) {
-                        errorDiv.innerHTML = `Please check your username or password`
+                        errorDiv.innerHTML = `${data.message}`;
                     } else {
                         const signupForm = document.getElementById('signup')
                         signupForm.reset();

@@ -84,7 +84,7 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/librarian/borrowBook", handler.LibrarianBorrowBook)
 	app.Get("/librarian/returnBook", handler.LibrarianReturnBook)
 
-	// app.Get("/admin/dashboard", handler.AdminDashboard)
+	app.Get("/admin/dashboard", handler.AdminDashboard)
 	app.Get("/admin/userList", handler.AdminUserList)
 	app.Get("/admin/addUser", handler.AdminAddUser)
 	app.Get("/admin/deleteUser", handler.AdminDeleteUser)

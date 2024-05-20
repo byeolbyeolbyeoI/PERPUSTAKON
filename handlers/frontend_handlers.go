@@ -58,6 +58,14 @@ func (h *Handler) LibrarianReturnBook(c *fiber.Ctx) error {
 	return c.Render("./frontend/views/librarian/return-book.html", nil)
 }
 
+func (h *Handler) AdminDashboard(c *fiber.Ctx) error {
+	if middleware.IsAdmin(c) == false {
+		return c.Render("./frontend/views/error-auth.html", nil)
+	}
+
+	return c.Render("./frontend/views/admin/dashboard.html", nil)
+}
+
 func (h *Handler) AdminUserList(c *fiber.Ctx) error {
 	if middleware.IsAdmin(c) == false {
 		return c.Render("./frontend/views/error-auth.html", nil)

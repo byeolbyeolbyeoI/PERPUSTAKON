@@ -46,6 +46,7 @@
     }
 
     .form__title {
+        margin-bottom: 0.6rem;
         font-size: 2em;
         font-weight: 600;
     }
@@ -88,10 +89,84 @@
     .form__input::placeholder {
         color: #bbbbbb;
     }
+      .app-container {
+          display: flex;
+      }
+      .column {
+          flex: 1;
+          padding: 10px;
+          min-height: 650px;
+      }
+      .column1 {
+      }
+      .column2 {
+      
+      }
+      .search-container {
+    display: flex;
+    align-items: center;
+    border: 2px solid #ccc;
+    border-radius: 25px;
+    padding: 2px 8px;
+    background-color: #fff;
+    width : 500px;
+}
 
-    .form__input-error-message { 
-        height: 20px;
-        margin-top: 0.5rem;
-        font-size: 0.85rem;
-        color: #cc3333;
+.search-input {
+    border: none;
+    outline: none;
+    padding: 6px 8px;
+    font-size: 14px;
+    flex: 1;
+    border-radius: 25px;
+}
+
+.search-input::placeholder {
+    color: #aaa;
+}
+
+.search-button {
+    border: none;
+    background: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 10px;
+    margin-left: 5px;
+}
+
+.search-button:focus {
+    outline: none;
+}
+
+    .content-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        border-radius: 5px 5px 0 0;
+        overflow: hidden;
+        width: 500px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .content-table thead tr {
+        background-color: #222222;
+        color: #ffffff;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .content-table th,
+    .content-table td {
+        padding: 12px 15px;
+    }
+
+    .content-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+    }
+    .content-table tbody tr:nth-of-type(even) {  
+        background-color: #f3f3f3;
+    }
+
+    .content-table tbody tr:last-of-type {  
+        border-bottom: 2px solid #222222;
     }

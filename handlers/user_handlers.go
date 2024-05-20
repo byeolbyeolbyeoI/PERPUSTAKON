@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"database/sql"
 
 	"perpustakaan/models"
 	"perpustakaan/repository"
@@ -47,7 +48,7 @@ func (h *Handler) AddUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
 			"success": true,
-			"message": "Successfully add user",
+			"message": "User added successfully",
 		})
 }
 
@@ -68,7 +69,29 @@ func (h *Handler) DeleteUser(c *fiber.Ctx) error {
 		)
 	}
 
-	_, err := h.DB.Exec("DELETE FROM users WHERE id=?", user.Id)
+	var availability int
+
+	err := h.DB.QueryRow("SELECT id FROM users WHERE id=?", user.Id).Scan(&availability)
+	if err == sql.ErrNoRows {
+		return c.Status(fiber.StatusInternalServerError).JSON(
+			fiber.Map{
+				"success": false,
+				"message": "User doesn't exist",
+				"code": "USER_NOT_REGISTERED",
+			},
+		)
+	}
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(
+			fiber.Map{
+				"success": false,
+				"message": "Error deleting user",
+				"code":    err.Error(),
+			},
+		)
+	}
+
+	_, err = h.DB.Exec("DELETE FROM users WHERE id=?", user.Id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
@@ -222,7 +245,7 @@ func (h *Handler) GetUsers(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
 			"success": true,
-			"message": "Successfully retrieved users data",
+			"message": "Users data retrieved successfully",
 			"data":    users})
 }
 
@@ -255,7 +278,7 @@ func (h *Handler) GetUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(
 		fiber.Map{
 			"success": true,
-			"message": "Successfully retrieved user data",
+			"message": "User data retrieved successfully",
 			"data": fiber.Map{
 				"id":       user.Id,
 				"username": user.Username,

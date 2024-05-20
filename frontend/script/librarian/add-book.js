@@ -1,8 +1,9 @@
         const form = document.querySelector('.form');
-        const div = document.querySelector('.div-response');
+        const error = document.getElementById('error-message');
 
         form.addEventListener('submit', event => {
             event.preventDefault();
+            console.log("here");
 
             const formData = new FormData(form);
             const title = formData.get('title');
@@ -15,6 +16,7 @@
 
             const releaseYearValue = parseInt(releaseYear);
 
+            console.log("sini");
             fetch('http://localhost:9000/addBook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json'},
@@ -30,6 +32,15 @@
                 }),
             })
                 .then(res => res.json())
-                .then(data => console.log(data))
+                .then(function(data) {
+                    form.reset();                
+                    if(data.success == false) {
+                        error.style.color = "#cc3333";
+                    } else {
+                        error.style.color = "#4bb544";
+                    }
+                    
+                    error.innerHTML = `${data.message}`;
+                })
                 .catch(error => console.log(error))
         });

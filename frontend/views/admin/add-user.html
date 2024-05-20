@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +14,7 @@
         <a href="/admin/deleteUser" class="nav__link" data-link>Delete User</a>
     </nav>
     <div id="app">
-        <form class="form">
+        <form class="form" id="form">
             <div class="form__title">Add User</div>
             <div class="form__item">
                 <label for="username" class="form__label">Username</label>
@@ -23,15 +22,14 @@
             </div>
             <div class="form__item">
                 <label for="password" class="form__label">Password</label>
-                <input type="text" class="form__input" name="password" id="password" placeholder="Enter the user's password">
+                <input type="password" class="form__input" name="password" id="password" placeholder="Enter the user's password">
                 </div>
             <div class="form__item">
                 <label for="role" class="form__label">Role</label>
                 <input type="text" class="form__input" name="role" id="role" placeholder="Enter the user's role">
             </div>
-            <br>
+                <div class="form__input-error-message" id="error-message" style="color: #cc3333; font-size: 0.85rem; margin-top: 0.4rem; margin-bottom: 0.4rem;"></div>
             <button type="submit" id="submit-button">Submit</button>
-            <div class="div-response"></div>
         </form>
     </div>
 </body>

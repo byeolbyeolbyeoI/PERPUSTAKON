@@ -17,7 +17,7 @@
         <a href="/librarian/returnBook" class="nav__link" data-link>Return Book</a>
     </nav>
     <div id="app">
-        <form class="form">
+        <form class="form" id="form">
             <div class="form__title">Add Book</div>
             <div class="form__item">
                 <label for="title" class="form__label">Title</label>
@@ -39,9 +39,8 @@
                 <label for="release-year" class="form__label">Release Year</label>
                 <input type="number" class="form__input" name="release-year" id="release-year" placeholder="Enter the book's release year">
             </div>
-            <br>
+            <div class="form__input-error-message" id="error-message" style="color: #cc3333; font-size: 0.85rem; margin-top: 0.4rem; margin-bottom: 0.4rem;"></div>
             <button type="submit" id="submit-button">Submit</button>
-            <div class="div-response"></div>
         </form>
     </div>
 </body>

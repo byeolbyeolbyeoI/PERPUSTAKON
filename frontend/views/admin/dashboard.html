@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="/prefix/styles/user/dashboard.css">
+    <link rel="stylesheet" href="/prefix/styles/admin/dashboard.css">
 </head>
 <body>
     <nav class="nav">
-        <a href="/user/dashboard" class="nav__link" data-link>Dashboard</a>
-        <a href="/user/bookList" class="nav__link" data-link>Book List</a>
+        <a href="/admin/dashboard" class="nav__link" data-link>Dashboard</a>
+        <a href="/admin/userList" class="nav__link" data-link>User List</a>
+        <a href="/admin/addUser" class="nav__link" data-link>Add User</a>
+        <a href="/admin/deleteUser" class="nav__link" data-link>Delete User</a>
     </nav>
     <div id="app">
       <div class="app-container">
@@ -35,12 +37,12 @@
     </div>
 </body>
 <script>
-    const userForm = document.querySelector(".form");
+    const form = document.querySelector(".form");
     const errorDiv = document.querySelector(".form__input-error-message")
 
-    userForm.addEventListener("submit", event => {
+    form.addEventListener("submit", event => {
         event.preventDefault();
-        const formData = new FormData(userForm);
+        const formData = new FormData(form);
         const searchParam = formData.get('search');
         const url = 'http://localhost:9000/getUserById/'
         const urlWithParam = url + searchParam;
