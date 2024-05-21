@@ -3,6 +3,7 @@ package handlers
 import (
 	"perpustakaan/models"
 	"perpustakaan/repository"
+	"database/sql"
 
 	"strconv"
 
@@ -89,7 +90,19 @@ func (h *Handler) DeleteBook(c *fiber.Ctx) error {
 		)
 	}
 
-	_, err := h.DB.Exec("DELETE FROM books WHERE id=?", book.Id)
+	var bookId int
+	err := h.DB.QueryRow("SELECT id FROM books WHERE id=?", book.Id).Scan(&bookId)
+	if err == sql.ErrNoRows {
+		return c.Status(fiber.StatusInternalServerError).JSON(
+			fiber.Map{
+				"success": false,
+				"message": "Book id is not registered",
+				"code":    err.Error(),
+			},
+		)
+	}
+
+	_, err = h.DB.Exec("DELETE FROM books WHERE id=?", book.Id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{

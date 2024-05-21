@@ -14,13 +14,13 @@
     <div id="app">
       <div class="app-container">
         <div class="column column1">
-        <form class="form">
-        <div class="form__title">Search User</div>
+        <form class="book__form" id="book__form">
+        <div class="form__title">Search Book</div>
             <div class="search-container">
-                <input type="text" name="search" class="search-input" placeholder="Enter User Id">
+                <input type="text" name="book-search" class="search-input" id="book-search" placeholder="Enter Book Title">
                 <button class="search-button" type="submit">🔍</button>
             </div>
-                <div class="form__input-error-message" id="error-message" style="color: #cc3333; font-size: 0.85rem; margin-top: 0.4rem; margin-bottom: 0.4rem;"></div>
+                <div class="form__input-error-message" id="book-error" style="color: #cc3333; font-size: 0.85rem; margin-top: 0.4rem; margin-bottom: 0.4rem;"></div>
         <table id="table" class="content-table">
             <thead id="head">
             </thead>
@@ -35,14 +35,13 @@
     </div>
 </body>
 <script>
-    const userForm = document.querySelector(".form");
-    const errorDiv = document.querySelector(".form__input-error-message")
-
-    userForm.addEventListener("submit", event => {
+    const bookForm = document.querySelector(".book__form");
+    const bookError = document.getElementById('book-error')
+    bookForm.addEventListener("submit", event => {
         event.preventDefault();
-        const formData = new FormData(userForm);
-        const searchParam = formData.get('search');
-        const url = 'http://localhost:9000/getUserById/'
+        const formData = new FormData(bookForm);
+        const searchParam = formData.get('book-search');
+        const url = 'http://localhost:9000/getBookByTitle/'
         const urlWithParam = url + searchParam;
 
         fetch(urlWithParam, {
@@ -52,23 +51,35 @@
             .then(res => res.json())
             .then(function(data) {
                 if(data.success == false) {
-                    errorDiv.innerHTML = `${data.message}`;
+                    let placeholder = document.querySelector("#content");
+                    let head = document.querySelector("#head");
+                    head.innerHTML = ``;
+                    placeholder.innerHTML = ``;
+                    bookError.innerHTML = `${data.message}`;
                 } else {
-                    errorDiv.innerHTML = ``;
+                    bookError.innerHTML = ``;
                     let placeholder = document.querySelector("#content");
                     let head = document.querySelector("#head");
                     head.innerHTML = `
                         <tr>
                             <th>Id</th>
-                            <th>Username</th>
-                            <th>Role</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Genres</th>
+                            <th>Synopsis</th>
+                            <th>releaseYear</th>
+                            <th>Available</th>
                         </tr>
                     `;
                     placeholder.innerHTML = `
                         <tr>
                             <td>${data.data.id}</td>
-                            <td>${data.data.username}</td>
-                            <td>${data.data.role}</td>
+                            <td>${data.data.title}</td>
+                            <td>${data.data.author}</td>
+                            <td>${data.data.genres}</td>
+                            <td>${data.data.synopsis}</td>
+                            <td>${data.data.releaseYear}</td>
+                            <td>${data.data.available}</td>
                         </tr>
                     `;
                 }

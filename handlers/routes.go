@@ -62,10 +62,11 @@ func SetupRoutes(app *fiber.App) {
 	// user
 	app.Post("/signupHandler", middleware.NotLoggedIn, handler.SignupHandler)
 	app.Post("/loginHandler", middleware.NotLoggedIn, handler.LoginHandler)
+	app.Get("/logoutHandler", handler.LogoutHandler)
 
 	// admin
 	app.Get("/getUsers", handler.GetUsers)
-	app.Get("/getUserById/:id", middleware.OnlyAdmin, handler.GetUser)
+	app.Get("/getUserById/:id", handler.GetUser)
 	app.Post("/addUser", handler.AddUser)
 	app.Delete("/deleteUser", handler.DeleteUser)
 
@@ -77,6 +78,7 @@ func SetupRoutes(app *fiber.App) {
 
 	app.Get("/login", handler.Login)
 
+	app.Get("/librarian/dashboard", handler.LibrarianDashboard)
 	app.Get("/librarian/bookList", handler.LibrarianBookList)
 	app.Get("/librarian/userList", handler.LibrarianUserList)
 	app.Get("/librarian/addBook", handler.LibrarianAddBook)

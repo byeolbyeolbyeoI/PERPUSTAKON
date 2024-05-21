@@ -76,7 +76,7 @@ func (h *Handler) DeleteUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(
 			fiber.Map{
 				"success": false,
-				"message": "User doesn't exist",
+				"message": "User id is not registered",
 				"code": "USER_NOT_REGISTERED",
 			},
 		)
@@ -284,5 +284,23 @@ func (h *Handler) GetUser(c *fiber.Ctx) error {
 				"username": user.Username,
 				"role":     user.Role,
 			},
+		})
+}
+
+
+func (h *Handler) LogoutHandler(c *fiber.Ctx) error {
+	cookie := &fiber.Cookie{
+		Name:     "token",
+		Value:    "",
+		MaxAge:   3600 * 24 * 30,
+		HTTPOnly: true,
+		SameSite: "lax",
+	}
+	c.Cookie(cookie)
+
+	return c.Status(fiber.StatusOK).JSON(
+		fiber.Map{
+			"success": true,
+			"message": "User logged out successfully",
 		})
 }

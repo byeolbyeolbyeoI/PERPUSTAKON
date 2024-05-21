@@ -10,6 +10,14 @@ func (h *Handler) Login(c *fiber.Ctx) error {
 	return c.Render("./frontend/views/login.html", nil)
 }
 
+func (h *Handler) LibrarianDashboard(c *fiber.Ctx) error {
+	if middleware.IsLibrarian(c) == false {
+		return c.Render("./frontend/views/error-auth.html", nil)
+	}
+
+	return c.Render("./frontend/views/librarian/dashboard.html", nil)
+}
+
 func (h *Handler) LibrarianBookList(c *fiber.Ctx) error {
 	if middleware.IsLibrarian(c) == false {
 		return c.Render("./frontend/views/error-auth.html", nil)

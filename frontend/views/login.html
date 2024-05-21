@@ -51,7 +51,7 @@
                     if(data.success === false) {
                         const loginForm = document.getElementById('login')
                         loginForm.reset();
-                        errorDiv.innerHTML = `Wrong username or password`
+                        errorDiv.innerHTML = `${data.message}`
                     } else {
                         const loginForm = document.getElementById('login')
                         loginForm.reset();

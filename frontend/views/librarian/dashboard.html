@@ -19,34 +19,54 @@
     <div id="app">
       <div class="app-container">
         <div class="column column1">
-        <form class="form">
-        <div class="form__title">Search User</div>
+        <form class="user__form">
+            <div class="form__title">Search User</div>
             <div class="search-container">
-                <input type="text" name="search" class="search-input" placeholder="Enter User Id">
+                <input type="text" name="user-search" class="search-input" placeholder="Enter User Id">
                 <button class="search-button" type="submit">🔍</button>
             </div>
-                <div class="form__input-error-message" id="error-message" style="color: #cc3333; font-size: 0.85rem; margin-top: 0.4rem; margin-bottom: 0.4rem;"></div>
-        <table id="table" class="content-table">
-            <thead id="head">
-            </thead>
-            <tbody id="content">
-    
-            </tbody>
-        </table>
-        </div>
+            <div class="form__input-error-message" id="user-error"
+                style="color: #cc3333; font-size: 0.85rem; margin-top: 0.4rem; margin-bottom: 0.4rem;"></div>
+            <table id="user-table" class="content-table">
+                <thead id="user-head">
+                </thead>
+                <tbody id="user-content">
+        
+                </tbody>
+            </table>
         </form>
-        <div class="column column2"></div>
+        </div>
+        <div class="column column2">
+        <form class="book__form">
+            <div class="form__title">Search Book</div>
+            <div class="search-container">
+                <input type="text" name="book-search" class="search-input" placeholder="Enter Book Id">
+                <button class="search-button" type="submit">🔍</button>
+            </div>
+            <div class="form__input-error-message" id="book-error"
+                style="color: #cc3333; font-size: 0.85rem; margin-top: 0.4rem; margin-bottom: 0.4rem;"></div>
+            <table id="book-table" class="content-table">
+                <thead id="book-head">
+                </thead>
+                <tbody id="book-content">
+        
+                </tbody>
+            </table>
+        </form>
+        </div>
       </div>
     </div>
 </body>
 <script>
-    const userForm = document.querySelector(".form");
-    const errorDiv = document.querySelector(".form__input-error-message")
+    const userForm = document.querySelector(".user__form");
+    const bookForm = document.querySelector(".book__form");
+    const userError = document.getElementById('user-error')
+    const bookError = document.getElementById('book-error')
 
     userForm.addEventListener("submit", event => {
         event.preventDefault();
         const formData = new FormData(userForm);
-        const searchParam = formData.get('search');
+        const searchParam = formData.get('user-search');
         const url = 'http://localhost:9000/getUserById/'
         const urlWithParam = url + searchParam;
 
@@ -57,11 +77,15 @@
             .then(res => res.json())
             .then(function(data) {
                 if(data.success == false) {
-                    errorDiv.innerHTML = `${data.message}`;
+                    let placeholder = document.querySelector("#user-content");
+                    let head = document.querySelector("#user-head");
+                    head.innerHTML = ``;
+                    placeholder.innerHTML = ``;
+                    userError.innerHTML = `${data.message}`;
                 } else {
-                    errorDiv.innerHTML = ``;
-                    let placeholder = document.querySelector("#content");
-                    let head = document.querySelector("#head");
+                    userError.innerHTML = ``;
+                    let placeholder = document.querySelector("#user-content");
+                    let head = document.querySelector("#user-head");
                     head.innerHTML = `
                         <tr>
                             <th>Id</th>
@@ -74,6 +98,56 @@
                             <td>${data.data.id}</td>
                             <td>${data.data.username}</td>
                             <td>${data.data.role}</td>
+                        </tr>
+                    `;
+                }
+            })
+            .catch(error => console.log(error))
+    })
+
+    bookForm.addEventListener("submit", event => {
+        event.preventDefault();
+        const formData = new FormData(bookForm);
+        const searchParam = formData.get('book-search');
+        const url = 'http://localhost:9000/getBookById/'
+        const urlWithParam = url + searchParam;
+
+        fetch(urlWithParam, {
+            method : 'GET',
+            headers: { 'Content-Type': 'application/json'},
+        })
+            .then(res => res.json())
+            .then(function(data) {
+                if(data.success == false) {
+                    let placeholder = document.querySelector("#book-content");
+                    let head = document.querySelector("#book-head");
+                    head.innerHTML = ``;
+                    placeholder.innerHTML = ``;
+                    bookError.innerHTML = `${data.message}`;
+                } else {
+                    bookError.innerHTML = ``;
+                    let placeholder = document.querySelector("#book-content");
+                    let head = document.querySelector("#book-head");
+                    head.innerHTML = `
+                        <tr>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Genres</th>
+                            <th>Synopsis</th>
+                            <th>releaseYear</th>
+                            <th>Available</th>
+                        </tr>
+                    `;
+                    placeholder.innerHTML = `
+                        <tr>
+                            <td>${data.data.id}</td>
+                            <td>${data.data.title}</td>
+                            <td>${data.data.author}</td>
+                            <td>${data.data.genres}</td>
+                            <td>${data.data.synopsis}</td>
+                            <td>${data.data.releaseYear}</td>
+                            <td>${data.data.available}</td>
                         </tr>
                     `;
                 }

@@ -12,6 +12,7 @@
         <a href="/admin/userList" class="nav__link" data-link>User List</a>
         <a href="/admin/addUser" class="nav__link" data-link>Add User</a>
         <a href="/admin/deleteUser" class="nav__link" data-link>Delete User</a>
+        <a href="/login" class="nav__link" id="logout" data-link>Logout</a>
     </nav>
     <div id="app">
       <div class="app-container">
@@ -54,6 +55,10 @@
             .then(res => res.json())
             .then(function(data) {
                 if(data.success == false) {
+                    let placeholder = document.querySelector("#content");
+                    let head = document.querySelector("#head");
+                    head.innerHTML = ``;
+                    placeholder.innerHTML = ``;
                     errorDiv.innerHTML = `${data.message}`;
                 } else {
                     errorDiv.innerHTML = ``;
@@ -77,5 +82,18 @@
             })
             .catch(error => console.log(error))
     })
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const logout = document.getElementById('logout')
+    logout.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default action
+        
+        fetch("http://localhost:9000/logoutHandler")
+
+        setTimeout(() => {
+            window.location.href = "http://localhost:9000/login";
+        }, 3000);
+    });
+});
 </script>
 </html>
