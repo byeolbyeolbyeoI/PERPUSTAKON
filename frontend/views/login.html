@@ -51,14 +51,13 @@
                     if(data.success === false) {
                         const loginForm = document.getElementById('login')
                         loginForm.reset();
-                        errorDiv.innerHTML = `${data.message}`
+                        errorDiv.innerHTML = `${data.message}` 
                     } else {
                         const loginForm = document.getElementById('login')
                         loginForm.reset();
                         css.style.color = "#4bb544";
                         errorDiv.innerHTML = `Successfully logged in, redirecting to the dashboard...`
                         const role = data.data.role
-                        console.log(role);
                         const url = "http://localhost:9000/" + role + "/dashboard";
                         setTimeout(() => {
                             window.location.href = url;

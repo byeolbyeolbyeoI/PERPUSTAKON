@@ -1,7 +1,6 @@
         const form = document.querySelector('.form');
         const errorDiv = document.querySelector('.form__input-error-message');
 
-        console.log("tes");
         form.addEventListener('submit', event => {
             event.preventDefault();
 
@@ -9,7 +8,6 @@
             const username = formData.get('username');
             const password = formData.get('password');
             const role = formData.get('role');
-            console.log("tes");
 
             fetch('http://localhost:9000/addUser', {
                 method: 'POST',
@@ -38,3 +36,16 @@
                 })
                 .catch(error => console.log(error))
         });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const logout = document.getElementById('logout')
+    logout.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default action
+        
+        fetch("http://localhost:9000/logoutHandler")
+
+        setTimeout(() => {
+            window.location.href = "http://localhost:9000/login";
+        }, 3000);
+    });
+});

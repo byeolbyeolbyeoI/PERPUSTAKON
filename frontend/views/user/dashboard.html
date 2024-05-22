@@ -10,6 +10,7 @@
     <nav class="nav">
         <a href="/user/dashboard" class="nav__link" data-link>Dashboard</a>
         <a href="/user/bookList" class="nav__link" data-link>Book List</a>
+        <a class="nav__link" id="logout" data-link>Logout</a>
     </nav>
     <div id="app">
       <div class="app-container">
@@ -86,5 +87,18 @@
             })
             .catch(error => console.log(error))
     })
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const logout = document.getElementById('logout')
+    logout.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default action
+        
+        fetch("http://localhost:9000/logoutHandler")
+
+        setTimeout(() => {
+            window.location.href = "http://localhost:9000/login";
+        }, 3000);
+    });
+});
 </script>
 </html>

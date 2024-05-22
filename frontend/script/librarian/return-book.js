@@ -34,3 +34,16 @@
                 })
                 .catch(error => console.log(error))
         });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const logout = document.getElementById('logout')
+    logout.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default action
+        
+        fetch("http://localhost:9000/logoutHandler")
+
+        setTimeout(() => {
+            window.location.href = "http://localhost:9000/login";
+        }, 3000);
+    });
+});
